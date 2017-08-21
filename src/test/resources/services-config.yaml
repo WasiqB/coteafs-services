@@ -1,0 +1,21 @@
+services:
+  first_api:
+    end_point: http://service.com/
+    end_point_suffix: proximity/
+    type: SOAP
+    logging:
+      log_all_payload: false
+      log_payload_on_error: true
+    params:
+      env: LOCAL
+      tenant: QSR
+  second_api:
+    end_point: http://service.com/
+    end_point_suffix: esb/
+    type: REST
+    logging:
+      log_all_payload: false
+      log_payload_on_error: true
+    params:
+      env: LOCAL
+      tenant: QSR

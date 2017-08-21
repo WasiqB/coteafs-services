@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>services</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>CoTeAFS Web Services Layer.</description>
+	<url>https://github.com/WasiqB/coteafs-services-java</url>
+
+	<parent>
+		<groupId>com.github.wasiqb.coteafs</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<scm>
+		<connection>scm:git:https://github.com/wasiqb/coteafs-services.git</connection>
+		<developerConnection>scm:git:https://github.com/wasiqb/coteafs-services.git</developerConnection>
+		<url>https://github.com/wasiqb/coteafs-services.git</url>
+	</scm>
+
+	<ciManagement>
+		<system>travis</system>
+		<url>https://travis-ci.org/wasiqb/coteafs-services</url>
+	</ciManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${restassured.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>json-path</artifactId>
+			<version>${restassured.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>xml-path</artifactId>
+			<version>${restassured.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.wasiqb.coteafs</groupId>
+			<artifactId>logger</artifactId>
+			<version>${coteafs.logger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.wasiqb.coteafs</groupId>
+			<artifactId>configs</artifactId>
+			<version>${coteafs.config.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.github.wasiqb.coteafs</groupId>
+			<artifactId>error</artifactId>
+			<version>${coteafs.error.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.truth</groupId>
+			<artifactId>truth</artifactId>
+			<version>${truth.version}</version>
+		</dependency>
+	</dependencies>
+</project>
