@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.wasiqb.coteafs.services.parser;
+package com.github.wasiqb.coteafs.services.response;
 
 /**
  * @author wasiq.bhamla
- * @since 27-Mar-2017 3:35:05 PM
+ * @since Aug 24, 2017 8:38:20 PM
  */
-public enum RequestType {
+public interface ResponseValueParser {
 	/**
-	 * Restful API.
+	 * @author wasiq.bhamla
+	 * @since Aug 24, 2017 8:38:28 PM
+	 * @param name
+	 * @param path
+	 * @return value from response
 	 */
-	REST,
-	/**
-	 * Soap API.
-	 */
-	SOAP;
+	<T> T valueOf (String name, String path);
 }

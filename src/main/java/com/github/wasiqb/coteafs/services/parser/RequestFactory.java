@@ -15,25 +15,26 @@
  */
 package com.github.wasiqb.coteafs.services.parser;
 
+import com.github.wasiqb.coteafs.services.config.ServiceType;
+
 /**
  * @author wasiq.bhamla
- * @since 28-Mar-2017 5:47:21 PM
+ * @since Aug 26, 2017 3:47:22 PM
  */
 public final class RequestFactory {
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:49:36 PM
+	 * @since Aug 26, 2017 3:47:26 PM
 	 * @param type
 	 * @return parser
 	 */
-	public static RequestParser getParser (final RequestType type) {
+	public static RequestParser getParser (final ServiceType type) {
 		switch (type) {
 			case REST:
 				return RestRequestParser.create ();
 			case SOAP:
-				return SoapRequestParser.create ();
 			default:
-				return null;
+				return SoapRequestParser.create ();
 		}
 	}
 }

@@ -22,8 +22,7 @@ import com.github.wasiqb.coteafs.services.error.XmlFormatTransformerError;
 public class XmlFormatter implements Formatter {
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.formatter.Formatter#format(java.lang.String,
-	 * java.lang.String)
+	 * @see com.github.wasiqb.coteafs.services.formatter.Formatter#format(java.lang.String)
 	 */
 	@Override
 	public String format (final String body) {

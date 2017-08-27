@@ -15,32 +15,37 @@
  */
 package com.github.wasiqb.coteafs.services.helper;
 
-import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
-
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.wasiqb.coteafs.services.error.JsonParseError;
-import com.github.wasiqb.coteafs.services.error.RequestSerializationError;
+import com.github.wasiqb.coteafs.services.config.LoggingSetting;
+import com.github.wasiqb.coteafs.services.config.ServiceSetting;
+import com.github.wasiqb.coteafs.services.parser.RequestFactory;
 import com.github.wasiqb.coteafs.services.parser.RequestParser;
-import com.github.wasiqb.coteafs.services.parser.RestRequestParser;
-import com.github.wasiqb.coteafs.services.parser.SoapRequestParser;
 import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import io.restassured.http.Method;
 import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
+import io.restassured.response.ValidatableResponseLogSpec;
+import io.restassured.specification.RequestLogSpecification;
 import io.restassured.specification.RequestSpecification;
 
 /**
+ * <pre>
+ * <code>
+ * RequestHandler.build ()
+ * 	.setting (serviceSetting)
+ * 	.using ()
+ * 	.headers (headerMap)
+ * 	.params (paramsMap)
+ * 	.resource ("/services")
+ * 	.with (requestElement)
+ * 	.execute (POST)
+ * 	.response ();
+ * </code>
+ * </pre>
+ *
  * @author wasiq.bhamla
  * @since 20-Aug-2017 3:48:38 PM
  */
@@ -54,96 +59,27 @@ public class RequestHandler {
 		return new RequestHandler ();
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:38:01 PM
-	 * @param source
-	 * @return Object to String.
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	private static String serialize (final Object source)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		final StringWriter sw = new StringWriter ();
-		final ObjectMapper map = new ObjectMapper ();
-		map.writeValue (sw, source);
-		return sw.toString ();
-	}
-
-	private String					contentType;
+	private String					name;
 	private RequestSpecification	req;
 	private Response				response;
+	private ServiceSetting			setting;
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:38:43 PM
-	 * @return object
+	 * @since Aug 25, 2017 2:49:52 PM
+	 * @param method
+	 * @param shouldWork
+	 * @return instance
 	 */
-	public JSONObject asObject () {
-		try {
-			return (JSONObject) new JSONParser ().parse (this.response.asString ());
+	public RequestHandler execute (final Method method, final boolean shouldWork) {
+		final LoggingSetting logging = this.setting.getLogging ();
+		logRequest (logging);
+		this.response = this.req.request (method);
+		logResponse (logging);
+		if (shouldWork) {
+			this.response.then ()
+				.statusCode (200);
 		}
-		catch (final ParseException e) {
-			fail (JsonParseError.class, "Error while parsing", e);
-		}
-		return null;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:39:02 PM
-	 * @param type
-	 * @return instance
-	 */
-	public RequestHandler contentType (final ContentType type) {
-		this.contentType = type.toString ();
-		this.req = this.req.contentType (type);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:39:22 PM
-	 * @param type
-	 * @return instance
-	 */
-	public RequestHandler contentType (final String type) {
-		this.contentType = type;
-		this.req = this.req.contentType (this.contentType);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:44:39 PM
-	 * @param url
-	 * @return instance
-	 */
-	public RequestHandler delete (final String url) {
-		this.response = this.req.delete (url);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:39:45 PM
-	 * @param url
-	 * @return instance
-	 */
-	public RequestHandler get (final String url) {
-		this.response = this.req.get (url);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:39:45 PM
-	 * @param url
-	 * @return instance
-	 */
-	public RequestHandler head (final String url) {
-		this.response = this.req.head (url);
 		return this;
 	}
 
@@ -153,61 +89,34 @@ public class RequestHandler {
 	 * @param headers
 	 * @return instance
 	 */
-	public RequestHandler headers (final Map <String, String> headers) {
-		this.req = this.req.headers (headers);
+	public RequestHandler headers (final Map <String, Object> headers) {
+		if (headers != null && headers.size () > 0) {
+			this.req = this.req.headers (headers);
+		}
 		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:46:07 PM
-	 * @param url
+	 * @since Aug 25, 2017 2:48:12 PM
+	 * @param parameters
 	 * @return instance
 	 */
-	public RequestHandler options (final String url) {
-		this.response = this.req.options (url);
+	public RequestHandler params (final Map <String, Object> parameters) {
+		if (parameters != null && parameters.size () > 0) {
+			this.req = this.req.params (parameters);
+		}
 		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:46:50 PM
-	 * @param url
+	 * @since Aug 25, 2017 2:53:07 PM
+	 * @param path
 	 * @return instance
 	 */
-	public RequestHandler patch (final String url) {
-		this.response = this.req.patch (url);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:41:08 PM
-	 * @param url
-	 * @return instance
-	 */
-	public RequestHandler post (final String url) {
-		this.response = this.req.post (url);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:39:34 PM
-	 */
-	public void printResponse () {
-		this.response.getBody ()
-			.prettyPrint ();
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:47:31 PM
-	 * @param url
-	 * @return instance
-	 */
-	public RequestHandler put (final String url) {
-		this.response = this.req.put (url);
+	public RequestHandler resource (final String path) {
+		this.req = this.req.basePath (path);
 		return this;
 	}
 
@@ -216,19 +125,35 @@ public class RequestHandler {
 	 * @since 20-Aug-2017 3:42:13 PM
 	 * @return response
 	 */
-	public Response response () {
-		return this.response;
+	public ResponseHandler response () {
+		return new ResponseHandler (this.name, this.response, this.setting);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 7:21:56 PM
+	 * @param setting
+	 * @return instance
+	 */
+	public RequestHandler setting (final ServiceSetting setting) {
+		this.setting = setting;
+		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since 20-Aug-2017 3:42:25 PM
-	 * @param url
 	 * @return instance
 	 */
-	public RequestHandler using (final String url) {
-		RestAssured.baseURI = url;
-		this.req = RestAssured.given ();
+	public RequestHandler using () {
+		this.req = RestAssured.given ()
+			.baseUri (this.setting.getEndPoint ());
+		if (this.setting.getPort () > 0) {
+			this.req = this.req.port (this.setting.getPort ());
+		}
+		if (this.setting.getContentType () != null) {
+			this.req = this.req.contentType (this.setting.getContentType ());
+		}
 		return this;
 	}
 
@@ -239,17 +164,41 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler with (final RequestElement request) {
-		RequestParser builder = null;
-		if (this.contentType.toLowerCase ()
-			.contains ("xml")) {
-			builder = SoapRequestParser.create ()
-				.build (request);
-		}
-		else {
-			builder = RestRequestParser.create ()
-				.build (request);
-		}
+		this.name = request.name ();
+		final RequestParser builder = RequestFactory.getParser (this.setting.getType ())
+			.build (request);
 		return with (builder.body ());
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 9:26:07 PM
+	 * @param logging
+	 */
+	private void logRequest (final LoggingSetting logging) {
+		final RequestLogSpecification log = this.req.log ();
+		if (logging.isLogHeaders ()) {
+			log.headers ();
+		}
+		if (logging.isLogOnlyRequests ()) {
+			log.body ();
+		}
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 9:26:41 PM
+	 * @param logging
+	 */
+	private void logResponse (final LoggingSetting logging) {
+		final ValidatableResponseLogSpec <ValidatableResponse, Response> log = this.response.then ()
+			.log ();
+		if (logging.isLogHeaders ()) {
+			log.headers ();
+		}
+		if (logging.isLogOnlyResponses ()) {
+			log.body ();
+		}
 	}
 
 	/**
@@ -258,41 +207,9 @@ public class RequestHandler {
 	 * @param request
 	 * @return instance
 	 */
-	public RequestHandler with (final String request) {
+	private RequestHandler with (final String request) {
 		this.req = this.req.body (request)
 			.when ();
 		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:43:18 PM
-	 * @param request
-	 * @return instance
-	 */
-	public <T> RequestHandler with (final T request) {
-		return with (request, false);
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:43:35 PM
-	 * @param request
-	 * @param debug
-	 * @return instance
-	 */
-	public <T> RequestHandler with (final T request, final boolean debug) {
-		String requestString;
-		try {
-			requestString = serialize (request);
-			if (debug) {
-				System.out.println (requestString);
-			}
-			return with (requestString);
-		}
-		catch (final IOException e) {
-			fail (RequestSerializationError.class, "Error while serializing request.", e);
-		}
-		return null;
 	}
 }

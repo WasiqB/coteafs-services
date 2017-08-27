@@ -27,13 +27,13 @@ import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 /**
  * @author wasiq.bhamla
- * @since 27-Mar-2017 4:13:38 PM
+ * @since Aug 26, 2017 4:06:36 PM
  */
 public class RestRequestParser implements RequestParser {
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:39:48 PM
-	 * @return instance
+	 * @since Aug 26, 2017 4:06:43 PM
+	 * @return parser
 	 */
 	public static RequestParser create () {
 		return new RestRequestParser ();
@@ -47,7 +47,7 @@ public class RestRequestParser implements RequestParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.mozido.api.builder.RequestBuilder#body()
+	 * @see com.github.wasiqb.coteafs.services.parser.RequestParser#body()
 	 */
 	@Override
 	public String body () {
@@ -63,7 +63,8 @@ public class RestRequestParser implements RequestParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.mozido.api.builder.RequestBuilder#build(com.mozido.api.builder.Element)
+	 * @see com.github.wasiqb.coteafs.services.parser.RequestParser#build(com.github.wasiqb.coteafs.
+	 * services.requests.RequestElement)
 	 */
 	@Override
 	public RequestParser build (final RequestElement element) {
@@ -73,7 +74,7 @@ public class RestRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:39:36 PM
+	 * @since Aug 26, 2017 4:07:03 PM
 	 * @param parent
 	 * @param element
 	 */

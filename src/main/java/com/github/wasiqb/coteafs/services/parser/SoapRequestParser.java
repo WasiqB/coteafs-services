@@ -34,13 +34,13 @@ import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 /**
  * @author wasiq.bhamla
- * @since 27-Mar-2017 4:14:52 PM
+ * @since Aug 26, 2017 4:10:35 PM
  */
 public class SoapRequestParser implements RequestParser {
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:42:14 PM
-	 * @return instance
+	 * @since Aug 26, 2017 4:10:40 PM
+	 * @return parser
 	 */
 	public static RequestParser create () {
 		return new SoapRequestParser ();
@@ -48,12 +48,13 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:43:09 PM
+	 * @since Aug 26, 2017 4:10:49 PM
 	 * @param parent
 	 * @param e
 	 * @throws SOAPException
 	 */
-	private static <T extends SOAPElement> void addAttributes (final T parent, final RequestElement e) throws SOAPException {
+	private static <T extends SOAPElement> void addAttributes (final T parent, final RequestElement e)
+			throws SOAPException {
 		for (final RequestAttribute attr : e.attributes ()) {
 			if (null != attr.value ()) {
 				final QName qName = parent.createQName (attr.name (), attr.prefix ());
@@ -65,7 +66,7 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:43:56 PM
+	 * @since Aug 26, 2017 4:10:56 PM
 	 * @param parent
 	 * @param element
 	 * @throws SOAPException
@@ -90,7 +91,7 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:42:38 PM
+	 * @since Aug 26, 2017 4:11:08 PM
 	 */
 	private SoapRequestParser () {
 		try {
@@ -103,7 +104,7 @@ public class SoapRequestParser implements RequestParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.parser.RequestBuilder#body()
+	 * @see com.github.wasiqb.coteafs.services.parser.RequestParser#body()
 	 */
 	@Override
 	public String body () {
@@ -120,9 +121,8 @@ public class SoapRequestParser implements RequestParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.github.wasiqb.coteafs.services.parser.RequestBuilder#build(com.github.wasiqb.coteafs.
-	 * services.requests.Element)
+	 * @see com.github.wasiqb.coteafs.services.parser.RequestParser#build(com.github.wasiqb.coteafs.
+	 * services.requests.RequestElement)
 	 */
 	@Override
 	public RequestParser build (final RequestElement element) {
@@ -145,12 +145,13 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:44:13 PM
+	 * @since Aug 26, 2017 4:11:33 PM
 	 * @param parent
 	 * @param element
 	 * @throws SOAPException
 	 */
-	private <T extends SOAPElement> void addElement (final T parent, final RequestElement element) throws SOAPException {
+	private <T extends SOAPElement> void addElement (final T parent, final RequestElement element)
+			throws SOAPException {
 		final List <RequestElement> elementList = element.childs ();
 		for (int i = 0; i < elementList.size (); i++) {
 			this.currentParent = parent;
@@ -184,7 +185,7 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:44:18 PM
+	 * @since Aug 26, 2017 4:11:43 PM
 	 * @throws SOAPException
 	 */
 	private void init () throws SOAPException {

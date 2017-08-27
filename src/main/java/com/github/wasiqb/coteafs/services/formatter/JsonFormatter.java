@@ -30,8 +30,7 @@ import com.google.gson.JsonParser;
 public class JsonFormatter implements Formatter {
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.formatter.Formatter#format(java.lang.String,
-	 * java.lang.String)
+	 * @see com.github.wasiqb.coteafs.services.formatter.Formatter#format(java.lang.String)
 	 */
 	@Override
 	public String format (final String body) {

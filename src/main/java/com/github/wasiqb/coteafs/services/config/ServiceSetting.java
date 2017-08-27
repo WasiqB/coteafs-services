@@ -18,15 +18,19 @@ package com.github.wasiqb.coteafs.services.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.restassured.http.ContentType;
+
 /**
  * @author wasiq.bhamla
  * @since Aug 7, 2017 12:40:53 PM
  */
 public class ServiceSetting {
+	private ContentType					contentType;
 	private String						endPoint;
 	private String						endPointSuffix;
 	private LoggingSetting				logging;
 	private final Map <String, Object>	params;
+	private int							port;
 	private ServiceType					type;
 
 	/**
@@ -36,6 +40,16 @@ public class ServiceSetting {
 	public ServiceSetting () {
 		this.params = new HashMap <> ();
 		this.type = ServiceType.SOAP;
+		this.contentType = ContentType.XML;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 9:57:04 PM
+	 * @return the contentType
+	 */
+	public ContentType getContentType () {
+		return this.contentType;
 	}
 
 	/**
@@ -76,11 +90,30 @@ public class ServiceSetting {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 10:06:28 PM
+	 * @return the port
+	 */
+	public int getPort () {
+		return this.port;
+	}
+
+	/**
+	 * @author wasiq.bhamla
 	 * @since Aug 8, 2017 3:40:01 PM
 	 * @return the type
 	 */
 	public ServiceType getType () {
 		return this.type;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 9:57:04 PM
+	 * @param contentType
+	 *            the contentType to set
+	 */
+	public void setContentType (final ContentType contentType) {
+		this.contentType = contentType;
 	}
 
 	/**
@@ -111,6 +144,16 @@ public class ServiceSetting {
 	 */
 	public void setLogging (final LoggingSetting logging) {
 		this.logging = logging;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 10:06:28 PM
+	 * @param port
+	 *            the port to set
+	 */
+	public void setPort (final int port) {
+		this.port = port;
 	}
 
 	/**

@@ -19,21 +19,21 @@ import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 /**
  * @author wasiq.bhamla
- * @since 27-Mar-2017 4:09:05 PM
+ * @since Aug 26, 2017 3:47:45 PM
  */
 public interface RequestParser {
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:45:46 PM
-	 * @return body string
+	 * @since Aug 26, 2017 3:47:50 PM
+	 * @return body
 	 */
 	String body ();
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since 28-Mar-2017 5:45:58 PM
+	 * @since Aug 26, 2017 3:47:55 PM
 	 * @param element
-	 * @return instance
+	 * @return parser
 	 */
 	RequestParser build (final RequestElement element);
 }

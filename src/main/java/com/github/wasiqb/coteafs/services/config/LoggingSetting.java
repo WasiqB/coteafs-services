@@ -20,7 +20,9 @@ package com.github.wasiqb.coteafs.services.config;
  * @since Aug 7, 2017 12:43:09 PM
  */
 public class LoggingSetting {
-	private boolean	logAllPayload;
+	private boolean	logHeaders;
+	private boolean	logOnlyRequests;
+	private boolean	logOnlyResponses;
 	private boolean	logPayloadOnError;
 
 	/**
@@ -28,17 +30,37 @@ public class LoggingSetting {
 	 * @since Aug 19, 2017 6:15:39 PM
 	 */
 	public LoggingSetting () {
-		this.logAllPayload = false;
+		this.logHeaders = false;
 		this.logPayloadOnError = true;
+		this.logOnlyRequests = true;
+		this.logOnlyResponses = true;
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 7, 2017 12:45:04 PM
-	 * @return the logAllPayload
+	 * @since Aug 25, 2017 9:22:04 PM
+	 * @return the logHeaders
 	 */
-	public boolean isLogAllPayload () {
-		return this.logAllPayload;
+	public boolean isLogHeaders () {
+		return this.logHeaders;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 6:34:20 PM
+	 * @return the logOnlyRequests
+	 */
+	public boolean isLogOnlyRequests () {
+		return this.logOnlyRequests;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 6:34:20 PM
+	 * @return the logOnlyResponses
+	 */
+	public boolean isLogOnlyResponses () {
+		return this.logOnlyResponses;
 	}
 
 	/**
@@ -52,12 +74,32 @@ public class LoggingSetting {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 7, 2017 12:45:04 PM
-	 * @param logAllPayload
-	 *            the logAllPayload to set
+	 * @since Aug 25, 2017 9:22:04 PM
+	 * @param logHeaders
+	 *            the logHeaders to set
 	 */
-	public void setLogAllPayload (final boolean logAllPayload) {
-		this.logAllPayload = logAllPayload;
+	public void setLogHeaders (final boolean logHeaders) {
+		this.logHeaders = logHeaders;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 6:34:20 PM
+	 * @param logOnlyRequests
+	 *            the logOnlyRequests to set
+	 */
+	public void setLogOnlyRequests (final boolean logOnlyRequests) {
+		this.logOnlyRequests = logOnlyRequests;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Aug 25, 2017 6:34:20 PM
+	 * @param logOnlyResponses
+	 *            the logOnlyResponses to set
+	 */
+	public void setLogOnlyResponses (final boolean logOnlyResponses) {
+		this.logOnlyResponses = logOnlyResponses;
 	}
 
 	/**
