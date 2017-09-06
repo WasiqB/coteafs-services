@@ -11,6 +11,7 @@
 		<groupId>com.github.wasiqb.coteafs</groupId>
 		<artifactId>parent</artifactId>
 		<version>1.0.0</version>
+		<relativePath>../coteafs-parent</relativePath>
 	</parent>
 
 	<scm>
@@ -44,6 +45,12 @@
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>${restassured.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.rest-assured</groupId>
@@ -54,6 +61,16 @@
 			<groupId>io.rest-assured</groupId>
 			<artifactId>xml-path</artifactId>
 			<version>${restassured.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${http.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.wasiqb.coteafs</groupId>

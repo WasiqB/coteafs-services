@@ -15,6 +15,8 @@
  */
 package com.github.wasiqb.coteafs.services.helper;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceType;
 import com.github.wasiqb.coteafs.services.response.ResponseValueParser;
@@ -53,6 +55,33 @@ public class ResponseHandler {
 	 */
 	public Headers headers () {
 		return this.response.headers ();
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 11:36:14 AM
+	 * @return status code.
+	 */
+	public int statusCode () {
+		return this.response.statusCode ();
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 11:35:47 AM
+	 * @return status line.
+	 */
+	public String statusLine () {
+		return this.response.statusLine ();
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 11:34:48 AM
+	 * @return response time in secs.
+	 */
+	public long time () {
+		return this.response.timeIn (TimeUnit.SECONDS);
 	}
 
 	/**

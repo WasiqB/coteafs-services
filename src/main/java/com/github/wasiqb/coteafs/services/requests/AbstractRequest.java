@@ -18,15 +18,15 @@ package com.github.wasiqb.coteafs.services.requests;
 import static com.github.wasiqb.coteafs.services.config.ConfigConstants.SERVICE_CONFIG_DEFAULT_FILE_NAME;
 import static com.github.wasiqb.coteafs.services.config.ConfigConstants.SERVICE_CONFIG_KEY;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.github.wasiqb.coteafs.config.loader.ConfigLoader;
+import com.github.wasiqb.coteafs.services.config.RequestMethod;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
 import com.github.wasiqb.coteafs.services.config.ServicesSetting;
 import com.github.wasiqb.coteafs.services.helper.RequestHandler;
 import com.github.wasiqb.coteafs.services.helper.ResponseHandler;
-
-import io.restassured.http.Method;
 
 /**
  * @author wasiq.bhamla
@@ -42,9 +42,13 @@ public abstract class AbstractRequest {
 			.load (ServicesSetting.class);
 	}
 
-	private final String			resourcePath;
-	private final RequestHandler	request;
-	private final ServiceSetting	setting;
+	private final Map <String, Object>	formParams;
+	private final Map <String, Object>	headers;
+	private final Map <String, Object>	params;
+	private final Map <String, Object>	pathParams;
+	private final Map <String, Object>	queryParams;
+	private final String				resourcePath;
+	private final ServiceSetting		setting;
 
 	/**
 	 * @author wasiq.bhamla
@@ -53,12 +57,13 @@ public abstract class AbstractRequest {
 	 * @since Aug 20, 2017 3:00:51 PM
 	 */
 	public AbstractRequest (final String serviceName, final String resourcePath) {
-		this.resourcePath = resourcePath;
 		this.setting = settings.getService (serviceName);
-		this.request = RequestHandler.build ()
-			.setting (this.setting)
-			.using ()
-			.resource (this.resourcePath);
+		this.headers = new HashMap <> ();
+		this.params = new HashMap <> ();
+		this.pathParams = new HashMap <> ();
+		this.formParams = new HashMap <> ();
+		this.queryParams = new HashMap <> ();
+		this.resourcePath = String.format ("%s%s", this.setting.getEndPointSuffix (), resourcePath);
 	}
 
 	/**
@@ -68,38 +73,67 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response handler
 	 */
-	public ResponseHandler execute (final Method method, final boolean shouldWork) {
-		return this.request.with (prepare ())
-			.execute (method, shouldWork)
+	public ResponseHandler execute (final RequestMethod method, final boolean shouldWork) {
+		RequestHandler handler = RequestHandler.build ()
+			.setting (this.setting)
+			.using ()
+			.resource (this.resourcePath);
+		if (method != RequestMethod.GET) {
+			handler = handler.with (prepare ());
+		}
+		setHeaders (handler);
+		setParams (handler);
+		System.out.println (handler.url ());
+		return handler.execute (method.getMethod (), shouldWork)
 			.response ();
 	}
 
 	/**
 	 * @author wasiq.bhamla
+	 * @param name
+	 * @param value
 	 * @since Aug 25, 2017 10:15:07 PM
-	 * @param headers
 	 * @return instance
 	 */
-	public AbstractRequest withHeaders (final Map <String, Object> headers) {
-		this.request.headers (headers);
+	public AbstractRequest withHeader (final String name, final Object value) {
+		this.headers.put (name, value);
 		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
+	 * @param name
+	 * @param value
 	 * @since Aug 25, 2017 10:15:12 PM
-	 * @param parameters
 	 * @return instance
 	 */
-	public AbstractRequest withParameters (final Map <String, Object> parameters) {
-		this.request.params (parameters);
+	public AbstractRequest withParameter (final String name, final Object value) {
+		this.params.put (name, value);
 		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Aug 25, 2017 10:19:45 PM
-	 * @return
+	 * @return request
 	 */
 	protected abstract RequestElement prepare ();
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 4, 2017 10:11:24 PM
+	 * @param handler
+	 */
+	private void setHeaders (final RequestHandler handler) {
+		handler.headers (this.headers);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 4, 2017 10:12:05 PM
+	 * @param handler
+	 */
+	private void setParams (final RequestHandler handler) {
+		handler.params (this.params);
+	}
 }

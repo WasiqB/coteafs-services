@@ -17,6 +17,8 @@ package com.github.wasiqb.coteafs.services.helper;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.github.wasiqb.coteafs.services.config.LoggingSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
 import com.github.wasiqb.coteafs.services.parser.RequestFactory;
@@ -61,6 +63,7 @@ public class RequestHandler {
 
 	private String					name;
 	private RequestSpecification	req;
+	private String					resource;
 	private Response				response;
 	private ServiceSetting			setting;
 
@@ -74,11 +77,27 @@ public class RequestHandler {
 	public RequestHandler execute (final Method method, final boolean shouldWork) {
 		final LoggingSetting logging = this.setting.getLogging ();
 		logRequest (logging);
+		if (!StringUtils.isEmpty (this.resource)) {
+			this.req = this.req.basePath (this.resource);
+		}
 		this.response = this.req.request (method);
 		logResponse (logging);
 		if (shouldWork) {
 			this.response.then ()
 				.statusCode (200);
+		}
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 10:28:22 PM
+	 * @param parameters
+	 * @return instance
+	 */
+	public RequestHandler formParams (final Map <String, Object> parameters) {
+		if (parameters != null && parameters.size () > 0) {
+			this.req = this.req.formParams (parameters);
 		}
 		return this;
 	}
@@ -111,12 +130,38 @@ public class RequestHandler {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 10:16:01 PM
+	 * @param parameters
+	 * @return instance
+	 */
+	public RequestHandler pathParams (final Map <String, Object> parameters) {
+		if (parameters != null && parameters.size () > 0) {
+			this.req = this.req.pathParams (parameters);
+		}
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 10:28:55 PM
+	 * @param parameters
+	 * @return instance
+	 */
+	public RequestHandler queryParams (final Map <String, Object> parameters) {
+		if (parameters != null && parameters.size () > 0) {
+			this.req = this.req.queryParams (parameters);
+		}
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
 	 * @since Aug 25, 2017 2:53:07 PM
 	 * @param path
 	 * @return instance
 	 */
 	public RequestHandler resource (final String path) {
-		this.req = this.req.basePath (path);
+		this.resource = path;
 		return this;
 	}
 
@@ -138,6 +183,17 @@ public class RequestHandler {
 	public RequestHandler setting (final ServiceSetting setting) {
 		this.setting = setting;
 		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 5, 2017 3:08:12 PM
+	 * @return url
+	 */
+	public String url () {
+		final StringBuilder path = new StringBuilder (this.setting.getEndPoint ());
+		path.append (this.resource);
+		return path.toString ();
 	}
 
 	/**
@@ -164,10 +220,13 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler with (final RequestElement request) {
-		this.name = request.name ();
-		final RequestParser builder = RequestFactory.getParser (this.setting.getType ())
-			.build (request);
-		return with (builder.body ());
+		if (request != null) {
+			this.name = request.name ();
+			final RequestParser builder = RequestFactory.getParser (this.setting.getType ())
+				.build (request);
+			return with (builder.body ());
+		}
+		return this;
 	}
 
 	/**
