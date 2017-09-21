@@ -160,6 +160,22 @@ public class RequestElement {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @since Sep 20, 2017 12:22:35 PM
+	 * @param childName
+	 * @return child
+	 */
+	public RequestElement getChild (final String childName) {
+		for (final RequestElement child : this.childs) {
+			if (child.name ()
+				.equalsIgnoreCase (childName)) {
+				return child;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @author wasiq.bhamla
 	 * @since 20-Aug-2017 3:24:49 PM
 	 * @return array object
 	 */

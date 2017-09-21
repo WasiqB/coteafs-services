@@ -15,14 +15,22 @@
  */
 package com.github.wasiqb.coteafs.services.helper;
 
-import java.util.concurrent.TimeUnit;
+import static java.lang.String.format;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.github.wasiqb.coteafs.services.config.LoggingSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceType;
+import com.github.wasiqb.coteafs.services.formatter.PayloadLoggerFactory;
+import com.github.wasiqb.coteafs.services.formatter.PayloadType;
 import com.github.wasiqb.coteafs.services.response.ResponseValueParser;
 import com.github.wasiqb.coteafs.services.response.RestResponseValueParser;
 import com.github.wasiqb.coteafs.services.response.SoapResponseValueParser;
 
+import io.restassured.http.Header;
 import io.restassured.http.Headers;
 import io.restassured.response.Response;
 
@@ -31,6 +39,14 @@ import io.restassured.response.Response;
  * @since Aug 25, 2017 3:56:47 PM
  */
 public class ResponseHandler {
+	private static final String	line;
+	private static final Logger	log;
+
+	static {
+		log = LogManager.getLogger (ResponseHandler.class);
+		line = StringUtils.repeat ("=", 80);
+	}
+
 	private final String			name;
 	private final Response			response;
 	private final ServiceSetting	setting;
@@ -46,6 +62,16 @@ public class ResponseHandler {
 		this.name = name;
 		this.response = response;
 		this.setting = setting;
+		logResponseInfo ();
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 10, 2017 9:28:54 PM
+	 * @return body
+	 */
+	public String body () {
+		return this.response.asString ();
 	}
 
 	/**
@@ -80,8 +106,10 @@ public class ResponseHandler {
 	 * @since Sep 5, 2017 11:34:48 AM
 	 * @return response time in secs.
 	 */
-	public long time () {
-		return this.response.timeIn (TimeUnit.SECONDS);
+	public double time () {
+		final long time = this.response.time ();
+		final double res = time / 1000.0;
+		return res;
 	}
 
 	/**
@@ -96,5 +124,45 @@ public class ResponseHandler {
 			parser = new RestResponseValueParser (this.response);
 		}
 		return parser.valueOf (this.name, expression);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 18, 2017 8:11:09 PM
+	 */
+	private void logHeaders () {
+		final LoggingSetting logging = this.setting.getLogging ();
+		if (logging.isLogHeaders ()) {
+			final Headers headers = this.response.headers ();
+			log.info (line);
+			log.info ("Response Headers:");
+			log.info (line);
+			for (final Header header : headers.asList ()) {
+				log.info (format ("%s: %s", header.getName (), header.getValue ()));
+			}
+		}
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 18, 2017 8:11:51 PM
+	 */
+	private void logResponse () {
+		final LoggingSetting logging = this.setting.getLogging ();
+		if (logging.isLogOnlyResponses ()) {
+			PayloadLoggerFactory.log (this.setting.getType (), PayloadType.RESPONSE, body ());
+		}
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 18, 2017 8:10:09 PM
+	 */
+	private void logResponseInfo () {
+		log.info (String.format ("Request executed in [%.2f] secs...", time ()));
+		log.info (String.format ("Status Code: [%d]...", statusCode ()));
+		log.info (String.format ("Status Message: [%s]...", statusLine ()));
+		logHeaders ();
+		logResponse ();
 	}
 }

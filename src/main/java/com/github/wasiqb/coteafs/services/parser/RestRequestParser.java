@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
 import org.testng.Assert;
 
 import com.github.wasiqb.coteafs.services.requests.RequestElement;
@@ -39,11 +40,7 @@ public class RestRequestParser implements RequestParser {
 		return new RestRequestParser ();
 	}
 
-	private final JSONObject obj;
-
-	private RestRequestParser () {
-		this.obj = new JSONObject ();
-	}
+	private JSONStreamAware obj;
 
 	/*
 	 * (non-Javadoc)
@@ -62,19 +59,59 @@ public class RestRequestParser implements RequestParser {
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * s(non-Javadoc)
 	 * @see com.github.wasiqb.coteafs.services.parser.RequestParser#build(com.github.wasiqb.coteafs.
-	 * services.requests.RequestElement)
+	 * services.requests.RequestElement, java.util.Map)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public RequestParser build (final RequestElement element) {
-		build (this.obj, element);
+		// Case when JSON object is pure JSON Array.
+		if (element.name () == null && element.list ()
+			.size () > 0) {
+			this.obj = new JSONArray ();
+			for (int j = 0; j < element.list ()
+				.size (); j++) {
+				final RequestElement v = element.list ()
+					.get (j);
+				final JSONObject arrObj = new JSONObject ();
+				build (arrObj, v);
+				((JSONArray) this.obj).add (arrObj);
+			}
+		}
+		else {
+			this.obj = new JSONObject ();
+			build ((JSONObject) this.obj, element);
+		}
 		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 26, 2017 4:07:03 PM
+	 * @param parent
+	 * @since Sep 21, 2017 7:27:44 PM
+	 * @param currentElement
+	 */
+	@SuppressWarnings ("unchecked")
+	private void addList (final JSONObject parent, final RequestElement currentElement) {
+		if (currentElement.list ()
+			.size () > 0) {
+			final JSONArray list = new JSONArray ();
+			for (int j = 0; j < currentElement.list ()
+				.size (); j++) {
+				final RequestElement v = currentElement.list ()
+					.get (j);
+				final JSONObject arrObj = new JSONObject ();
+				build (arrObj, v);
+				list.add (arrObj);
+			}
+			parent.put (currentElement.name (), list);
+		}
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 13, 2017 9:08:20 PM
 	 * @param parent
 	 * @param element
 	 */
@@ -86,27 +123,15 @@ public class RestRequestParser implements RequestParser {
 			if (currentElement.display ()) {
 				final Object value = currentElement.value ();
 				if (null != value) {
-					parent.put (currentElement.name (), currentElement.value ());
+					parent.put (currentElement.name (), value);
 				}
 				else {
 					final JSONObject child = new JSONObject ();
 					build (child, currentElement);
 					parent.put (currentElement.name (), child);
 				}
-				if (currentElement.list ()
-					.size () > 0) {
-					final JSONArray list = new JSONArray ();
-					for (int j = 0; j < currentElement.list ()
-						.size (); j++) {
-						final RequestElement v = currentElement.list ()
-							.get (j);
-						final JSONObject arrObj = new JSONObject ();
-						build (arrObj, v);
-						list.add (arrObj);
-					}
-					parent.put (currentElement.name (), list);
-				}
 			}
 		}
+		addList (parent, element);
 	}
 }

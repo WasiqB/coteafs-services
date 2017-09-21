@@ -15,22 +15,26 @@
  */
 package com.github.wasiqb.coteafs.services.helper;
 
+import static java.lang.String.format;
+
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.wasiqb.coteafs.services.config.LoggingSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
+import com.github.wasiqb.coteafs.services.formatter.PayloadLoggerFactory;
+import com.github.wasiqb.coteafs.services.formatter.PayloadType;
 import com.github.wasiqb.coteafs.services.parser.RequestFactory;
 import com.github.wasiqb.coteafs.services.parser.RequestParser;
 import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
-import io.restassured.response.ValidatableResponseLogSpec;
-import io.restassured.specification.RequestLogSpecification;
 import io.restassured.specification.RequestSpecification;
 
 /**
@@ -52,6 +56,14 @@ import io.restassured.specification.RequestSpecification;
  * @since 20-Aug-2017 3:48:38 PM
  */
 public class RequestHandler {
+	private static final String	line;
+	private static final Logger	log;
+
+	static {
+		log = LogManager.getLogger (RequestHandler.class);
+		line = StringUtils.repeat ("=", 80);
+	}
+
 	/**
 	 * @author wasiq.bhamla
 	 * @since 20-Aug-2017 3:37:19 PM
@@ -62,9 +74,9 @@ public class RequestHandler {
 	}
 
 	private String					name;
-	private RequestSpecification	req;
+	private RequestSpecification	request;
 	private String					resource;
-	private Response				response;
+	private ResponseHandler			response;
 	private ServiceSetting			setting;
 
 	/**
@@ -75,16 +87,18 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler execute (final Method method, final boolean shouldWork) {
-		final LoggingSetting logging = this.setting.getLogging ();
-		logRequest (logging);
-		if (!StringUtils.isEmpty (this.resource)) {
-			this.req = this.req.basePath (this.resource);
+		log.info (line);
+		log.info (String.format ("Executing request with method [%s]...", method));
+		try {
+			final Response res = this.request.request (method);
+			this.response = new ResponseHandler (this.name, res, this.setting);
+			if (shouldWork) {
+				res.then ()
+					.statusCode (200);
+			}
 		}
-		this.response = this.req.request (method);
-		logResponse (logging);
-		if (shouldWork) {
-			this.response.then ()
-				.statusCode (200);
+		catch (final Exception e) {
+			e.printStackTrace ();
 		}
 		return this;
 	}
@@ -97,7 +111,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler formParams (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
-			this.req = this.req.formParams (parameters);
+			this.request = this.request.formParams (parameters);
 		}
 		return this;
 	}
@@ -110,7 +124,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler headers (final Map <String, Object> headers) {
 		if (headers != null && headers.size () > 0) {
-			this.req = this.req.headers (headers);
+			this.request = this.request.headers (headers);
 		}
 		return this;
 	}
@@ -123,7 +137,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler params (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
-			this.req = this.req.params (parameters);
+			this.request = this.request.params (parameters);
 		}
 		return this;
 	}
@@ -136,7 +150,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler pathParams (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
-			this.req = this.req.pathParams (parameters);
+			this.request = this.request.pathParams (parameters);
 		}
 		return this;
 	}
@@ -149,7 +163,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler queryParams (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
-			this.req = this.req.queryParams (parameters);
+			this.request = this.request.queryParams (parameters);
 		}
 		return this;
 	}
@@ -162,6 +176,10 @@ public class RequestHandler {
 	 */
 	public RequestHandler resource (final String path) {
 		this.resource = path;
+		if (!StringUtils.isEmpty (this.resource)) {
+			log.info (format ("End-point resource: %s", this.resource));
+			this.request = this.request.basePath (this.resource);
+		}
 		return this;
 	}
 
@@ -171,7 +189,7 @@ public class RequestHandler {
 	 * @return response
 	 */
 	public ResponseHandler response () {
-		return new ResponseHandler (this.name, this.response, this.setting);
+		return this.response;
 	}
 
 	/**
@@ -202,13 +220,22 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler using () {
-		this.req = RestAssured.given ()
-			.baseUri (this.setting.getEndPoint ());
-		if (this.setting.getPort () > 0) {
-			this.req = this.req.port (this.setting.getPort ());
+		final String endPoint = this.setting.getEndPoint ();
+		final int port = this.setting.getPort ();
+		final ContentType type = this.setting.getContentType ();
+		this.request = RestAssured.given ()
+			.baseUri (endPoint);
+		log.info (line);
+		log.info ("Preparing to execute request with following parameters:");
+		log.info (line);
+		log.info (format ("End-point url: %s", endPoint));
+		if (port > 0) {
+			log.info (format ("End-point port: %d", port));
+			this.request = this.request.port (port);
 		}
-		if (this.setting.getContentType () != null) {
-			this.req = this.req.contentType (this.setting.getContentType ());
+		if (type != null) {
+			log.info (format ("End-point content-tyoe: %s", type));
+			this.request = this.request.contentType (type);
 		}
 		return this;
 	}
@@ -216,58 +243,31 @@ public class RequestHandler {
 	/**
 	 * @author wasiq.bhamla
 	 * @since 20-Aug-2017 3:42:47 PM
-	 * @param request
+	 * @param requestElement
 	 * @return instance
 	 */
-	public RequestHandler with (final RequestElement request) {
-		if (request != null) {
-			this.name = request.name ();
+	public RequestHandler with (final RequestElement requestElement) {
+		if (requestElement != null) {
+			this.name = requestElement.name ();
 			final RequestParser builder = RequestFactory.getParser (this.setting.getType ())
-				.build (request);
-			return with (builder.body ());
+				.build (requestElement);
+			final String body = builder.body ();
+			return with (body, this.setting.getLogging ());
 		}
 		return this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 25, 2017 9:26:07 PM
-	 * @param logging
-	 */
-	private void logRequest (final LoggingSetting logging) {
-		final RequestLogSpecification log = this.req.log ();
-		if (logging.isLogHeaders ()) {
-			log.headers ();
-		}
-		if (logging.isLogOnlyRequests ()) {
-			log.body ();
-		}
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since Aug 25, 2017 9:26:41 PM
-	 * @param logging
-	 */
-	private void logResponse (final LoggingSetting logging) {
-		final ValidatableResponseLogSpec <ValidatableResponse, Response> log = this.response.then ()
-			.log ();
-		if (logging.isLogHeaders ()) {
-			log.headers ();
-		}
-		if (logging.isLogOnlyResponses ()) {
-			log.body ();
-		}
-	}
-
-	/**
-	 * @author wasiq.bhamla
 	 * @since 20-Aug-2017 3:43:04 PM
-	 * @param request
+	 * @param requestBody
 	 * @return instance
 	 */
-	private RequestHandler with (final String request) {
-		this.req = this.req.body (request)
+	private RequestHandler with (final String requestBody, final LoggingSetting logging) {
+		if (logging.isLogOnlyRequests ()) {
+			PayloadLoggerFactory.log (this.setting.getType (), PayloadType.REQUEST, requestBody);
+		}
+		this.request = this.request.body (requestBody)
 			.when ();
 		return this;
 	}

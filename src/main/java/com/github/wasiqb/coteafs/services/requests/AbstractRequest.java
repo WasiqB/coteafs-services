@@ -42,6 +42,7 @@ public abstract class AbstractRequest {
 			.load (ServicesSetting.class);
 	}
 
+	protected RequestElement			request;
 	private final Map <String, Object>	formParams;
 	private final Map <String, Object>	headers;
 	private final Map <String, Object>	params;
@@ -49,6 +50,7 @@ public abstract class AbstractRequest {
 	private final Map <String, Object>	queryParams;
 	private final String				resourcePath;
 	private final ServiceSetting		setting;
+	private final Map <String, Object>	values;
 
 	/**
 	 * @author wasiq.bhamla
@@ -63,8 +65,15 @@ public abstract class AbstractRequest {
 		this.pathParams = new HashMap <> ();
 		this.formParams = new HashMap <> ();
 		this.queryParams = new HashMap <> ();
+		this.values = new HashMap <> ();
 		this.resourcePath = String.format ("%s%s", this.setting.getEndPointSuffix (), resourcePath);
 	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 21, 2017 10:38:06 AM
+	 */
+	public abstract void buildRequest ();
 
 	/**
 	 * @author wasiq.bhamla
@@ -79,13 +88,27 @@ public abstract class AbstractRequest {
 			.using ()
 			.resource (this.resourcePath);
 		if (method != RequestMethod.GET) {
-			handler = handler.with (prepare ());
+			handler = handler.with (this.request);
 		}
 		setHeaders (handler);
 		setParams (handler);
-		System.out.println (handler.url ());
+		setFormParams (handler);
+		setQueryParams (handler);
+		setPathParams (handler);
 		return handler.execute (method.getMethod (), shouldWork)
 			.response ();
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 9, 2017 10:18:17 PM
+	 * @param name
+	 * @param value
+	 * @return instance
+	 */
+	public AbstractRequest withFormParameter (final String name, final Object value) {
+		this.formParams.put (name, value);
+		return this;
 	}
 
 	/**
@@ -114,10 +137,70 @@ public abstract class AbstractRequest {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 25, 2017 10:19:45 PM
-	 * @return request
+	 * @since Sep 9, 2017 10:18:30 PM
+	 * @param name
+	 * @param value
+	 * @return instance
 	 */
-	protected abstract RequestElement prepare ();
+	public AbstractRequest withPathParameter (final String name, final Object value) {
+		this.pathParams.put (name, value);
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 9, 2017 10:18:37 PM
+	 * @param name
+	 * @param value
+	 * @return instance
+	 */
+	public AbstractRequest withQueryParameter (final String name, final Object value) {
+		this.queryParams.put (name, value);
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 20, 2017 3:38:31 PM
+	 * @param requestElement
+	 * @return instance
+	 */
+	public AbstractRequest withRequest (final RequestElement requestElement) {
+		this.request = requestElement;
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 21, 2017 11:27:56 AM
+	 * @param fieldName
+	 * @param value
+	 * @return instance
+	 */
+	public AbstractRequest withValue (final String fieldName, final Object value) {
+		this.values.put (fieldName, value);
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 21, 2017 11:30:07 AM
+	 * @param fieldName
+	 * @return value
+	 */
+	@SuppressWarnings ("unchecked")
+	protected <V> V get (final String fieldName) {
+		return (V) this.values.get (fieldName);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 9, 2017 10:39:36 PM
+	 * @param handler
+	 */
+	private void setFormParams (final RequestHandler handler) {
+		handler.formParams (this.params);
+	}
 
 	/**
 	 * @author wasiq.bhamla
@@ -135,5 +218,23 @@ public abstract class AbstractRequest {
 	 */
 	private void setParams (final RequestHandler handler) {
 		handler.params (this.params);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 9, 2017 10:39:44 PM
+	 * @param handler
+	 */
+	private void setPathParams (final RequestHandler handler) {
+		handler.pathParams (this.pathParams);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 9, 2017 10:39:41 PM
+	 * @param handler
+	 */
+	private void setQueryParams (final RequestHandler handler) {
+		handler.queryParams (this.queryParams);
 	}
 }

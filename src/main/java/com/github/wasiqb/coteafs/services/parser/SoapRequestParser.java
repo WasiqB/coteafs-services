@@ -58,8 +58,8 @@ public class SoapRequestParser implements RequestParser {
 		for (final RequestAttribute attr : e.attributes ()) {
 			if (null != attr.value ()) {
 				final QName qName = parent.createQName (attr.name (), attr.prefix ());
-				parent.addAttribute (qName, attr.value ()
-					.toString ());
+				final String value = attr.value ();
+				parent.addAttribute (qName, value);
 			}
 		}
 	}
@@ -174,9 +174,9 @@ public class SoapRequestParser implements RequestParser {
 					.size () > 0) {
 					addAttributes (child, currentElement);
 				}
-				if (null != currentElement.value ()) {
-					child.addTextNode (currentElement.value ()
-						.toString ());
+				final Object value = currentElement.value ();
+				if (null != value) {
+					child.addTextNode (value.toString ());
 				}
 				addElement (child, currentElement);
 			}

@@ -27,19 +27,23 @@ import com.google.gson.JsonParser;
  * @author wasiq.bhamla
  * @since Aug 20, 2017 2:23:25 PM
  */
-public class JsonFormatter implements Formatter {
+class JsonPayloadLogger implements PayloadLogger {
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.formatter.Formatter#format(java.lang.String)
+	 * @see
+	 * com.github.wasiqb.coteafs.services.formatter.PayloadLogger#log(com.github.wasiqb.coteafs.
+	 * services.formatter.PayloadType, java.lang.String)
 	 */
 	@Override
-	public String format (final String body) {
+	public String [] getPayload (final PayloadType type, final String body) {
 		try {
 			final JsonParser parser = new JsonParser ();
 			final Gson gson = new GsonBuilder ().setPrettyPrinting ()
 				.create ();
 			final JsonElement element = parser.parse (body);
-			return gson.toJson (element);
+			final String [] ret = gson.toJson (element)
+				.split ("\n");
+			return ret;
 		}
 		catch (final Exception e) {
 			fail (JsonFormatTransformerError.class, "Error while JSON Transformation.", e);

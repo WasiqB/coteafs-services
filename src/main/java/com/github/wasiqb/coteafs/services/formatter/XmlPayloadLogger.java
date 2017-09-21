@@ -19,13 +19,14 @@ import com.github.wasiqb.coteafs.services.error.XmlFormatTransformerError;
  * @author wasiq.bhamla
  * @since Aug 18, 2017 4:20:56 PM
  */
-public class XmlFormatter implements Formatter {
+class XmlPayloadLogger implements PayloadLogger {
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.formatter.Formatter#format(java.lang.String)
+	 * @see com.github.wasiqb.coteafs.services.formatter.PayloadLogger#getPayload(com.github.wasiqb.
+	 * coteafs.services.formatter.PayloadType, java.lang.String)
 	 */
 	@Override
-	public String format (final String body) {
+	public String [] getPayload (final PayloadType type, final String body) {
 		final Source input = new StreamSource (new StringReader (body));
 		final StringWriter writer = new StringWriter ();
 		final StreamResult output = new StreamResult (writer);
@@ -35,8 +36,10 @@ public class XmlFormatter implements Formatter {
 			final Transformer transformer = transformerFactory.newTransformer ();
 			transformer.setOutputProperty (OutputKeys.INDENT, "yes");
 			transformer.transform (input, output);
-			return output.getWriter ()
-				.toString ();
+			final String [] ret = output.getWriter ()
+				.toString ()
+				.split ("\n");
+			return ret;
 		}
 		catch (final TransformerException e) {
 			fail (XmlFormatTransformerError.class, "Error while Xml Transformation.", e);
