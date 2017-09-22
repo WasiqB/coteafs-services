@@ -59,9 +59,9 @@ public class RestRequestParser implements RequestParser {
 	}
 
 	/*
-	 * s(non-Javadoc)
+	 * (non-Javadoc)
 	 * @see com.github.wasiqb.coteafs.services.parser.RequestParser#build(com.github.wasiqb.coteafs.
-	 * services.requests.RequestElement, java.util.Map)
+	 * services.requests.RequestElement)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -131,7 +131,7 @@ public class RestRequestParser implements RequestParser {
 					parent.put (currentElement.name (), child);
 				}
 			}
+			addList (parent, currentElement);
 		}
-		addList (parent, element);
 	}
 }
