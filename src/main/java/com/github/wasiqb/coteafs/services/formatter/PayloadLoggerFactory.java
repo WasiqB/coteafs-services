@@ -26,12 +26,12 @@ import com.github.wasiqb.coteafs.services.config.ServiceType;
  * @since Sep 10, 2017 9:24:57 PM
  */
 public class PayloadLoggerFactory {
-	private static final String	line;
-	private static final Logger	log;
+	private static final String	LINE;
+	private static final Logger	LOG;
 
 	static {
-		log = LogManager.getLogger (PayloadLoggerFactory.class);
-		line = StringUtils.repeat ("=", 80);
+		LOG = LogManager.getLogger (PayloadLoggerFactory.class);
+		LINE = StringUtils.repeat ("=", 80);
 	}
 
 	/**
@@ -47,11 +47,19 @@ public class PayloadLoggerFactory {
 			logger = new XmlPayloadLogger ();
 		}
 
-		log.info (line);
-		log.info (payloadType.getType ());
-		log.info (line);
+		LOG.info (LINE);
+		LOG.info (payloadType.getType ());
+		LOG.info (LINE);
 		for (final String text : logger.getPayload (payloadType, body)) {
-			log.info (text);
+			LOG.info (text);
 		}
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 24, 2017 1:48:22 PM
+	 */
+	private PayloadLoggerFactory () {
+		// Utility class.
 	}
 }

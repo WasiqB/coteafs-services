@@ -67,8 +67,8 @@ public class RestRequestParser implements RequestParser {
 	@Override
 	public RequestParser build (final RequestElement element) {
 		// Case when JSON object is pure JSON Array.
-		if (element.name () == null && element.list ()
-			.size () > 0) {
+		if (element.name () == null && !element.list ()
+			.isEmpty ()) {
 			this.obj = new JSONArray ();
 			for (int j = 0; j < element.list ()
 				.size (); j++) {
@@ -94,8 +94,8 @@ public class RestRequestParser implements RequestParser {
 	 */
 	@SuppressWarnings ("unchecked")
 	private void addList (final JSONObject parent, final RequestElement currentElement) {
-		if (currentElement.list ()
-			.size () > 0) {
+		if (!currentElement.list ()
+			.isEmpty ()) {
 			final JSONArray list = new JSONArray ();
 			for (int j = 0; j < currentElement.list ()
 				.size (); j++) {

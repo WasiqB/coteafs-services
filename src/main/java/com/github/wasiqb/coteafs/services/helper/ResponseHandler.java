@@ -39,12 +39,12 @@ import io.restassured.response.Response;
  * @since Aug 25, 2017 3:56:47 PM
  */
 public class ResponseHandler {
-	private static final String	line;
-	private static final Logger	log;
+	private static final String	LINE;
+	private static final Logger	LOG;
 
 	static {
-		log = LogManager.getLogger (ResponseHandler.class);
-		line = StringUtils.repeat ("=", 80);
+		LOG = LogManager.getLogger (ResponseHandler.class);
+		LINE = StringUtils.repeat ("=", 80);
 	}
 
 	private final String			name;
@@ -108,8 +108,7 @@ public class ResponseHandler {
 	 */
 	public double time () {
 		final long time = this.response.time ();
-		final double res = time / 1000.0;
-		return res;
+		return time / 1000.0;
 	}
 
 	/**
@@ -134,11 +133,11 @@ public class ResponseHandler {
 		final LoggingSetting logging = this.setting.getLogging ();
 		if (logging.isLogHeaders ()) {
 			final Headers headers = this.response.headers ();
-			log.info (line);
-			log.info ("Response Headers:");
-			log.info (line);
+			LOG.info (LINE);
+			LOG.info ("Response Headers:");
+			LOG.info (LINE);
 			for (final Header header : headers.asList ()) {
-				log.info (format ("%s: %s", header.getName (), header.getValue ()));
+				LOG.info (format ("%s: %s", header.getName (), header.getValue ()));
 			}
 		}
 	}
@@ -159,9 +158,9 @@ public class ResponseHandler {
 	 * @since Sep 18, 2017 8:10:09 PM
 	 */
 	private void logResponseInfo () {
-		log.info (String.format ("Request executed in [%.2f] secs...", time ()));
-		log.info (String.format ("Status Code: [%d]...", statusCode ()));
-		log.info (String.format ("Status Message: [%s]...", statusLine ()));
+		LOG.info (String.format ("Request executed in [%.2f] secs...", time ()));
+		LOG.info (String.format ("Status Code: [%d]...", statusCode ()));
+		LOG.info (String.format ("Status Message: [%s]...", statusLine ()));
 		logHeaders ();
 		logResponse ();
 	}

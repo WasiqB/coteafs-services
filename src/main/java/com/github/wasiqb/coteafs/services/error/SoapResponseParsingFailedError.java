@@ -13,36 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.wasiqb.coteafs.services.parser;
+package com.github.wasiqb.coteafs.services.error;
 
-import com.github.wasiqb.coteafs.services.config.ServiceType;
+import com.github.wasiqb.coteafs.error.CoteafsError;
 
 /**
  * @author wasiq.bhamla
- * @since Aug 26, 2017 3:47:22 PM
+ * @since Sep 24, 2017 2:48:24 PM
  */
-public final class RequestFactory {
+public class SoapResponseParsingFailedError extends CoteafsError {
+	private static final long serialVersionUID = -5073547350805350528L;
+
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 26, 2017 3:47:26 PM
-	 * @param type
-	 * @return parser
+	 * @since Sep 24, 2017 2:48:24 PM
+	 * @param message
 	 */
-	public static RequestParser getParser (final ServiceType type) {
-		switch (type) {
-			case REST:
-				return RestRequestParser.create ();
-			case SOAP:
-			default:
-				return SoapRequestParser.create ();
-		}
+	public SoapResponseParsingFailedError (final String message) {
+		super (message);
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Sep 24, 2017 2:10:46 PM
+	 * @since Sep 24, 2017 2:48:24 PM
+	 * @param message
+	 * @param cause
 	 */
-	private RequestFactory () {
-		// Utility class.
+	public SoapResponseParsingFailedError (final String message, final Throwable cause) {
+		super (message, cause);
 	}
 }

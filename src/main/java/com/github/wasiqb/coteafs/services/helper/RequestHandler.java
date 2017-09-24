@@ -15,9 +15,11 @@
  */
 package com.github.wasiqb.coteafs.services.helper;
 
+import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
 import static java.lang.String.format;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.wasiqb.coteafs.services.config.LoggingSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
+import com.github.wasiqb.coteafs.services.error.RequestExecutionFailedError;
 import com.github.wasiqb.coteafs.services.formatter.PayloadLoggerFactory;
 import com.github.wasiqb.coteafs.services.formatter.PayloadType;
 import com.github.wasiqb.coteafs.services.parser.RequestFactory;
@@ -56,12 +59,12 @@ import io.restassured.specification.RequestSpecification;
  * @since 20-Aug-2017 3:48:38 PM
  */
 public class RequestHandler {
-	private static final String	line;
-	private static final Logger	log;
+	private static final String	LINE;
+	private static final Logger	LOG;
 
 	static {
-		log = LogManager.getLogger (RequestHandler.class);
-		line = StringUtils.repeat ("=", 80);
+		LOG = LogManager.getLogger (RequestHandler.class);
+		LINE = StringUtils.repeat ("=", 80);
 	}
 
 	/**
@@ -73,10 +76,20 @@ public class RequestHandler {
 		return new RequestHandler ();
 	}
 
+	private static void logMap (final String mapName, final Map <String, Object> map) {
+		LOG.info (LINE);
+		LOG.info (String.format ("Following %s is used", mapName));
+		LOG.info (LINE);
+		for (final Entry <String, Object> key : map.entrySet ()) {
+			LOG.info (format ("%s: %s", key.getKey (), key.getValue ()));
+		}
+	}
+
 	private String					name;
 	private RequestSpecification	request;
 	private String					resource;
 	private ResponseHandler			response;
+
 	private ServiceSetting			setting;
 
 	/**
@@ -87,8 +100,8 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler execute (final Method method, final boolean shouldWork) {
-		log.info (line);
-		log.info (String.format ("Executing request with method [%s]...", method));
+		LOG.info (LINE);
+		LOG.info (format ("Executing request with method [%s]...", method));
 		try {
 			final Response res = this.request.request (method);
 			this.response = new ResponseHandler (this.name, res, this.setting);
@@ -98,7 +111,7 @@ public class RequestHandler {
 			}
 		}
 		catch (final Exception e) {
-			e.printStackTrace ();
+			fail (RequestExecutionFailedError.class, "Execute failed:", e);
 		}
 		return this;
 	}
@@ -111,6 +124,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler formParams (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
+			logMap ("Form Params", parameters);
 			this.request = this.request.formParams (parameters);
 		}
 		return this;
@@ -124,6 +138,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler headers (final Map <String, Object> headers) {
 		if (headers != null && headers.size () > 0) {
+			logMap ("Request Headers", headers);
 			this.request = this.request.headers (headers);
 		}
 		return this;
@@ -137,6 +152,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler params (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
+			logMap ("Params", parameters);
 			this.request = this.request.params (parameters);
 		}
 		return this;
@@ -150,6 +166,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler pathParams (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
+			logMap ("Path Params", parameters);
 			this.request = this.request.pathParams (parameters);
 		}
 		return this;
@@ -163,6 +180,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler queryParams (final Map <String, Object> parameters) {
 		if (parameters != null && parameters.size () > 0) {
+			logMap ("Query Params", parameters);
 			this.request = this.request.queryParams (parameters);
 		}
 		return this;
@@ -177,7 +195,7 @@ public class RequestHandler {
 	public RequestHandler resource (final String path) {
 		this.resource = path;
 		if (!StringUtils.isEmpty (this.resource)) {
-			log.info (format ("End-point resource: %s", this.resource));
+			LOG.info (format ("End-point resource: %s", this.resource));
 			this.request = this.request.basePath (this.resource);
 		}
 		return this;
@@ -225,16 +243,16 @@ public class RequestHandler {
 		final ContentType type = this.setting.getContentType ();
 		this.request = RestAssured.given ()
 			.baseUri (endPoint);
-		log.info (line);
-		log.info ("Preparing to execute request with following parameters:");
-		log.info (line);
-		log.info (format ("End-point url: %s", endPoint));
+		LOG.info (LINE);
+		LOG.info ("Preparing to execute request with following parameters:");
+		LOG.info (LINE);
+		LOG.info (format ("End-point url: %s", endPoint));
 		if (port > 0) {
-			log.info (format ("End-point port: %d", port));
+			LOG.info (format ("End-point port: %d", port));
 			this.request = this.request.port (port);
 		}
 		if (type != null) {
-			log.info (format ("End-point content-tyoe: %s", type));
+			LOG.info (format ("End-point content-tyoe: %s", type));
 			this.request = this.request.contentType (type);
 		}
 		return this;

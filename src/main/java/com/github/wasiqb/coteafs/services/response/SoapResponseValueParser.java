@@ -15,7 +15,12 @@
  */
 package com.github.wasiqb.coteafs.services.response;
 
+import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
+import static java.lang.String.format;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.github.wasiqb.coteafs.services.error.SoapResponseParsingFailedError;
 
 import io.restassured.path.xml.XmlPath;
 import io.restassured.response.Response;
@@ -54,11 +59,11 @@ public class SoapResponseValueParser implements ResponseValueParser {
 			return null;
 		}
 		try {
-			final T value = xmlPath.get (path);
-			return value;
+			return xmlPath.get (path);
 		}
 		catch (final Exception e) {
-			e.printStackTrace ();
+			final String message = "Soap Response value parsing failed for [%s] expression.";
+			fail (SoapResponseParsingFailedError.class, format (message, path), e);
 		}
 		return null;
 	}

@@ -15,6 +15,8 @@
  */
 package com.github.wasiqb.coteafs.services.parser;
 
+import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +31,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import com.github.wasiqb.coteafs.services.error.SoapParserInitError;
+import com.github.wasiqb.coteafs.services.error.SoapRequestParsingFailedError;
 import com.github.wasiqb.coteafs.services.requests.RequestAttribute;
 import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
@@ -55,11 +59,14 @@ public class SoapRequestParser implements RequestParser {
 	 */
 	private static <T extends SOAPElement> void addAttributes (final T parent, final RequestElement e)
 			throws SOAPException {
-		for (final RequestAttribute attr : e.attributes ()) {
-			if (null != attr.value ()) {
-				final QName qName = parent.createQName (attr.name (), attr.prefix ());
-				final String value = attr.value ();
-				parent.addAttribute (qName, value);
+		if (!e.attributes ()
+			.isEmpty ()) {
+			for (final RequestAttribute attr : e.attributes ()) {
+				if (null != attr.value ()) {
+					final QName qName = parent.createQName (attr.name (), attr.prefix ());
+					final String value = attr.value ();
+					parent.addAttribute (qName, value);
+				}
 			}
 		}
 	}
@@ -73,21 +80,21 @@ public class SoapRequestParser implements RequestParser {
 	 */
 	private static <T extends SOAPElement> void addNamespaces (final T parent, final RequestElement element)
 			throws SOAPException {
-		for (final String prefix : element.namespaces ()
-			.keySet ()) {
-			final String uri = element.namespaces ()
-				.get (prefix);
-			parent.addNamespaceDeclaration (prefix, uri);
+		if (!element.namespaces ()
+			.isEmpty ()) {
+			for (final String prefix : element.namespaces ()
+				.keySet ()) {
+				final String uri = element.namespaces ()
+					.get (prefix);
+				parent.addNamespaceDeclaration (prefix, uri);
+			}
 		}
 	}
 
 	private SOAPBodyElement	body;
-	private SOAPElement		currentParent;
-	private MessageFactory	factory;
 	private SOAPBody		soapBody;
 	private SOAPEnvelope	soapEnv;
 	private SOAPMessage		soapMessage;
-	private SOAPPart		soapPart;
 
 	/**
 	 * @author wasiq.bhamla
@@ -98,7 +105,7 @@ public class SoapRequestParser implements RequestParser {
 			init ();
 		}
 		catch (final SOAPException e) {
-			e.printStackTrace ();
+			fail (SoapParserInitError.class, "Soap Parser Init failed.", e);
 		}
 	}
 
@@ -114,7 +121,7 @@ public class SoapRequestParser implements RequestParser {
 			return new String (bs.toByteArray ());
 		}
 		catch (SOAPException | IOException e) {
-			e.printStackTrace ();
+			fail (SoapRequestParsingFailedError.class, "Soap Request Body Parsing failed:", e);
 		}
 		return null;
 	}
@@ -126,18 +133,16 @@ public class SoapRequestParser implements RequestParser {
 	 */
 	@Override
 	public RequestParser build (final RequestElement element) {
-		if (element != null) {
-			if (this.body == null) {
-				try {
-					addNamespaces (this.soapEnv, element);
-					final QName qName = this.soapBody.createQName (element.name (), element.prefix ());
-					this.body = this.soapBody.addBodyElement (qName);
-					addAttributes (this.body, element);
-					addElement (this.body, element);
-				}
-				catch (final SOAPException e) {
-					e.printStackTrace ();
-				}
+		if (element != null && this.body == null) {
+			try {
+				addNamespaces (this.soapEnv, element);
+				final QName qName = this.soapBody.createQName (element.name (), element.prefix ());
+				this.body = this.soapBody.addBodyElement (qName);
+				addAttributes (this.body, element);
+				addElement (this.body, element);
+			}
+			catch (final SOAPException e) {
+				fail (SoapRequestParsingFailedError.class, "Soap Request Parsing failed:", e);
 			}
 		}
 		return this;
@@ -154,26 +159,21 @@ public class SoapRequestParser implements RequestParser {
 			throws SOAPException {
 		final List <RequestElement> elementList = element.childs ();
 		for (int i = 0; i < elementList.size (); i++) {
-			this.currentParent = parent;
+			final T currentParent = parent;
 			final RequestElement currentElement = elementList.get (i);
 			SOAPElement child = null;
 
 			if (currentElement.display ()) {
 				if (currentElement.prefix () != null) {
-					child = this.currentParent.addChildElement (currentElement.name (), currentElement.prefix ());
+					child = currentParent.addChildElement (currentElement.name (), currentElement.prefix ());
 				}
 				else {
-					child = this.currentParent.addChildElement (currentElement.name ());
+					child = currentParent.addChildElement (currentElement.name ());
 				}
 
-				if (currentElement.namespaces ()
-					.size () > 0) {
-					addNamespaces (child, currentElement);
-				}
-				if (currentElement.attributes ()
-					.size () > 0) {
-					addAttributes (child, currentElement);
-				}
+				addNamespaces (child, currentElement);
+				addAttributes (child, currentElement);
+
 				final Object value = currentElement.value ();
 				if (null != value) {
 					child.addTextNode (value.toString ());
@@ -189,16 +189,17 @@ public class SoapRequestParser implements RequestParser {
 	 * @throws SOAPException
 	 */
 	private void init () throws SOAPException {
-		this.factory = MessageFactory.newInstance ();
-		this.soapMessage = this.factory.createMessage ();
-		this.soapPart = this.soapMessage.getSOAPPart ();
-		this.soapEnv = this.soapPart.getEnvelope ();
+		final MessageFactory factory = MessageFactory.newInstance ();
+		this.soapMessage = factory.createMessage ();
+		final SOAPPart soapPart = this.soapMessage.getSOAPPart ();
+		this.soapEnv = soapPart.getEnvelope ();
 		this.soapBody = this.soapEnv.getBody ();
 		this.soapEnv.removeNamespaceDeclaration (this.soapEnv.getPrefix ());
-		this.soapEnv.setPrefix ("soapenv");
+		final String prefix = "soapenv";
+		this.soapEnv.setPrefix (prefix);
 		this.soapMessage.getSOAPHeader ()
-			.setPrefix ("soapenv");
+			.setPrefix (prefix);
 		this.soapMessage.getSOAPBody ()
-			.setPrefix ("soapenv");
+			.setPrefix (prefix);
 	}
 }

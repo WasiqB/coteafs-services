@@ -36,14 +36,13 @@ class XmlPayloadLogger implements PayloadLogger {
 			final Transformer transformer = transformerFactory.newTransformer ();
 			transformer.setOutputProperty (OutputKeys.INDENT, "yes");
 			transformer.transform (input, output);
-			final String [] ret = output.getWriter ()
+			return output.getWriter ()
 				.toString ()
 				.split ("\n");
-			return ret;
 		}
 		catch (final TransformerException e) {
 			fail (XmlFormatTransformerError.class, "Error while Xml Transformation.", e);
 		}
-		return null;
+		return new String [] {};
 	}
 }

@@ -89,13 +89,13 @@ public class RequestElement {
 	 * @param name
 	 */
 	private RequestElement (final String prefix, final String name) {
-		this.childs = new ArrayList <RequestElement> ();
-		this.list = new ArrayList <RequestElement> ();
-		this.attributes = new ArrayList <RequestAttribute> ();
+		this.childs = new ArrayList <> ();
+		this.list = new ArrayList <> ();
+		this.attributes = new ArrayList <> ();
 		this.display = true;
 		this.prefix = prefix;
 		this.name = name;
-		this.namespace = new HashMap <String, String> ();
+		this.namespace = new HashMap <> ();
 	}
 
 	/**

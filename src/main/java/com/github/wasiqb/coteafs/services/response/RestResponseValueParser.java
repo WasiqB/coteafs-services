@@ -15,7 +15,12 @@
  */
 package com.github.wasiqb.coteafs.services.response;
 
+import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
+import static java.lang.String.format;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.github.wasiqb.coteafs.services.error.RestResponseParsingFailedError;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -53,11 +58,11 @@ public class RestResponseValueParser implements ResponseValueParser {
 			return null;
 		}
 		try {
-			final T value = jsonPath.get (path);
-			return value;
+			return jsonPath.get (path);
 		}
 		catch (final Exception e) {
-			e.printStackTrace ();
+			final String message = "Response value parsing failed for [%s] expression.";
+			fail (RestResponseParsingFailedError.class, format (message, path), e);
 		}
 		return null;
 	}

@@ -30,9 +30,8 @@ import com.google.gson.JsonParser;
 class JsonPayloadLogger implements PayloadLogger {
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.github.wasiqb.coteafs.services.formatter.PayloadLogger#log(com.github.wasiqb.coteafs.
-	 * services.formatter.PayloadType, java.lang.String)
+	 * @see com.github.wasiqb.coteafs.services.formatter.PayloadLogger#getPayload(com.github.wasiqb.
+	 * coteafs.services.formatter.PayloadType, java.lang.String)
 	 */
 	@Override
 	public String [] getPayload (final PayloadType type, final String body) {
@@ -41,13 +40,12 @@ class JsonPayloadLogger implements PayloadLogger {
 			final Gson gson = new GsonBuilder ().setPrettyPrinting ()
 				.create ();
 			final JsonElement element = parser.parse (body);
-			final String [] ret = gson.toJson (element)
+			return gson.toJson (element)
 				.split ("\n");
-			return ret;
 		}
 		catch (final Exception e) {
 			fail (JsonFormatTransformerError.class, "Error while JSON Transformation.", e);
 		}
-		return null;
+		return new String [] {};
 	}
 }
