@@ -77,11 +77,13 @@ public class RequestHandler {
 	}
 
 	private static void logMap (final String mapName, final Map <String, Object> map) {
-		LOG.info (LINE);
-		LOG.info (String.format ("Following %s is used", mapName));
-		LOG.info (LINE);
-		for (final Entry <String, Object> key : map.entrySet ()) {
-			LOG.info (format ("%s: %s", key.getKey (), key.getValue ()));
+		if (!map.isEmpty ()) {
+			LOG.info (LINE);
+			LOG.info (String.format ("Following %s is used", mapName));
+			LOG.info (LINE);
+			for (final Entry <String, Object> key : map.entrySet ()) {
+				LOG.info (format ("%s: %s", key.getKey (), key.getValue ()));
+			}
 		}
 	}
 
@@ -89,7 +91,6 @@ public class RequestHandler {
 	private RequestSpecification	request;
 	private String					resource;
 	private ResponseHandler			response;
-
 	private ServiceSetting			setting;
 
 	/**
@@ -102,6 +103,7 @@ public class RequestHandler {
 	public RequestHandler execute (final Method method, final boolean shouldWork) {
 		LOG.info (LINE);
 		LOG.info (format ("Executing request with method [%s]...", method));
+		LOG.info (LINE);
 		try {
 			final Response res = this.request.request (method);
 			this.response = new ResponseHandler (this.name, res, this.setting);
