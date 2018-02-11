@@ -36,7 +36,7 @@ public class BaseTest {
 		user.withQueryParameter ("page", 2);
 		final ResponseHandler res = user.execute (RequestMethod.GET, true);
 
-		System.out.println (res.valueOf ("data.find { it.id == 50 }.last_name")
+		System.out.println (res.valueOf ("data.find { it.id == 4 }.last_name")
 			.toString ());
 	}
 }
