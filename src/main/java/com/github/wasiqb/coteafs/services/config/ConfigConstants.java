@@ -23,7 +23,7 @@ public interface ConfigConstants {
 	/**
 	 * Config key.
 	 */
-	String	SERVICE_CONFIG_DEFAULT_FILE_NAME	= "services-config.yaml";
+	String	SERVICE_CONFIG_DEFAULT_FILE_NAME	= "/services-config.yaml";
 	/**
 	 * Default config file name.
 	 */

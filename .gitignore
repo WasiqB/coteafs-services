@@ -2,3 +2,5 @@
 /*.gpg
 /*.gpg.lock
 /target/
+/logs/
+/test-output/

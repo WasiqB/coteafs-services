@@ -1,21 +1,8 @@
 services:
   first_api:
-    end_point: http://service.com/
-    end_point_suffix: proximity/
-    type: SOAP
-    logging:
-      log_all_payload: false
-      log_payload_on_error: true
-    params:
-      env: LOCAL
-      tenant: QSR
-  second_api:
-    end_point: http://service.com/
-    end_point_suffix: esb/
+    end_point: https://reqres.in
+    end_point_suffix: /api
     type: REST
+    content_type: JSON
     logging:
-      log_all_payload: false
       log_payload_on_error: true
-    params:
-      env: LOCAL
-      tenant: QSR
