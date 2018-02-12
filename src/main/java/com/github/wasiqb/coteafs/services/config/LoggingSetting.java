@@ -32,8 +32,8 @@ public class LoggingSetting {
 	public LoggingSetting () {
 		this.logHeaders = false;
 		this.logPayloadOnError = true;
-		this.logOnlyRequests = true;
-		this.logOnlyResponses = true;
+		this.logOnlyRequests = false;
+		this.logOnlyResponses = false;
 	}
 
 	/**

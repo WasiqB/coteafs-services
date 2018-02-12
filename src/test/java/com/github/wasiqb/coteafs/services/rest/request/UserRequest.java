@@ -16,6 +16,7 @@
 package com.github.wasiqb.coteafs.services.rest.request;
 
 import com.github.wasiqb.coteafs.services.requests.AbstractRequest;
+import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 /**
  * @author wasiq.bhamla
@@ -46,8 +47,16 @@ public class UserRequest extends AbstractRequest {
 	 * @see com.github.wasiqb.coteafs.services.requests.AbstractRequest#buildRequest()
 	 */
 	@Override
-	public void buildRequest () {
-		// TODO Auto-generated method stub
+	public RequestElement prepare () {
+		final RequestElement user = RequestElement.create ();
 
+		RequestElement.create ("name")
+			.parent (user)
+			.value (get ("name"));
+		RequestElement.create ("job")
+			.parent (user)
+			.value (get ("job"));
+
+		return user;
 	}
 }

@@ -7,7 +7,7 @@
 	</listeners> -->
 	<test name="Test">
 		<classes>
-			<class name="com.github.wasiqb.coteafs.services.rest.BaseTest" />
+			<class name="com.github.wasiqb.coteafs.services.rest.RestTest" />
 		</classes>
 	</test> <!-- Android Test -->
 </suite> <!-- coteafs-appium Test Suite -->

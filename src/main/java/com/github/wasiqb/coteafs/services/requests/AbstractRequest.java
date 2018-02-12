@@ -42,7 +42,6 @@ public abstract class AbstractRequest {
 			.load (ServicesSetting.class);
 	}
 
-	protected RequestElement			request;
 	private final Map <String, Object>	formParams;
 	private final Map <String, Object>	headers;
 	private final Map <String, Object>	params;
@@ -71,12 +70,6 @@ public abstract class AbstractRequest {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Sep 21, 2017 10:38:06 AM
-	 */
-	public abstract void buildRequest ();
-
-	/**
-	 * @author wasiq.bhamla
 	 * @since Aug 25, 2017 10:14:51 PM
 	 * @param method
 	 * @param shouldWork
@@ -88,7 +81,7 @@ public abstract class AbstractRequest {
 			.using ()
 			.resource (this.resourcePath);
 		if (method != RequestMethod.GET) {
-			handler = handler.with (this.request);
+			handler = handler.with (prepare ());
 		}
 		setHeaders (handler);
 		setParams (handler);
@@ -98,6 +91,13 @@ public abstract class AbstractRequest {
 		return handler.execute (method.getMethod (), shouldWork)
 			.response ();
 	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @return request
+	 * @since Sep 21, 2017 10:38:06 AM
+	 */
+	public abstract RequestElement prepare ();
 
 	/**
 	 * @author wasiq.bhamla
@@ -156,17 +156,6 @@ public abstract class AbstractRequest {
 	 */
 	public AbstractRequest withQueryParameter (final String name, final Object value) {
 		this.queryParams.put (name, value);
-		return this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 20, 2017 3:38:31 PM
-	 * @param requestElement
-	 * @return instance
-	 */
-	public AbstractRequest withRequest (final RequestElement requestElement) {
-		this.request = requestElement;
 		return this;
 	}
 

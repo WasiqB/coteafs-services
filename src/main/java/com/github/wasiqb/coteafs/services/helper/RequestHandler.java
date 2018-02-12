@@ -16,6 +16,7 @@
 package com.github.wasiqb.coteafs.services.helper;
 
 import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
+import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.format;
 
 import java.util.Map;
@@ -108,8 +109,8 @@ public class RequestHandler {
 			final Response res = this.request.request (method);
 			this.response = new ResponseHandler (this.name, res, this.setting);
 			if (shouldWork) {
-				res.then ()
-					.statusCode (200);
+				assertThat (res.statusCode ()).isGreaterThan (199);
+				assertThat (res.statusCode ()).isLessThan (300);
 			}
 		}
 		catch (final Exception e) {
