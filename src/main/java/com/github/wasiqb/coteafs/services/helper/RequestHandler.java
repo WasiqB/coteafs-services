@@ -287,7 +287,7 @@ public class RequestHandler {
 	 */
 	private void setSoapHeaders () {
 		if (this.setting.getType () == ServiceType.SOAP) {
-			final Map <String, Object> headers = new HashMap <String, Object> ();
+			final Map <String, Object> headers = new HashMap <> ();
 			headers.put ("Keep-Alive", "timeout=10, max=127");
 
 			headers (headers);

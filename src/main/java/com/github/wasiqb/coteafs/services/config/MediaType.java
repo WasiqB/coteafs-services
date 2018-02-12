@@ -69,10 +69,10 @@ public enum MediaType {
 	 */
 	URLENC ("application/x-www-form-urlencoded");
 
-	private final String mediaType;
+	private final String type;
 
-	private MediaType (final String mediaType) {
-		this.mediaType = mediaType;
+	private MediaType (final String type) {
+		this.type = type;
 	}
 
 	/*
@@ -81,6 +81,6 @@ public enum MediaType {
 	 */
 	@Override
 	public String toString () {
-		return this.mediaType;
+		return this.type;
 	}
 }
