@@ -19,6 +19,7 @@ import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
 import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.format;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,7 +28,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.wasiqb.coteafs.services.config.LoggingSetting;
+import com.github.wasiqb.coteafs.services.config.MediaType;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
+import com.github.wasiqb.coteafs.services.config.ServiceType;
 import com.github.wasiqb.coteafs.services.error.RequestExecutionFailedError;
 import com.github.wasiqb.coteafs.services.formatter.PayloadLoggerFactory;
 import com.github.wasiqb.coteafs.services.formatter.PayloadType;
@@ -36,7 +39,6 @@ import com.github.wasiqb.coteafs.services.parser.RequestParser;
 import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -106,6 +108,7 @@ public class RequestHandler {
 		LOG.info (format ("Executing request with method [%s]...", method));
 		LOG.info (LINE);
 		try {
+			setSoapHeaders ();
 			final Response res = this.request.request (method);
 			this.response = new ResponseHandler (this.name, res, this.setting);
 			if (shouldWork) {
@@ -243,7 +246,7 @@ public class RequestHandler {
 	public RequestHandler using () {
 		final String endPoint = this.setting.getEndPoint ();
 		final int port = this.setting.getPort ();
-		final ContentType type = this.setting.getContentType ();
+		final MediaType type = this.setting.getContentType ();
 		this.request = RestAssured.given ()
 			.baseUri (endPoint);
 		LOG.info (LINE);
@@ -256,7 +259,7 @@ public class RequestHandler {
 		}
 		if (type != null) {
 			LOG.info (format ("End-point content-tyoe: %s", type));
-			this.request = this.request.contentType (type);
+			this.request = this.request.contentType (type.toString ());
 		}
 		return this;
 	}
@@ -276,6 +279,19 @@ public class RequestHandler {
 			return with (body, this.setting.getLogging ());
 		}
 		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Feb 12, 2018 9:27:45 PM
+	 */
+	private void setSoapHeaders () {
+		if (this.setting.getType () == ServiceType.SOAP) {
+			final Map <String, Object> headers = new HashMap <String, Object> ();
+			headers.put ("Keep-Alive", "timeout=10, max=127");
+
+			headers (headers);
+		}
 	}
 
 	/**

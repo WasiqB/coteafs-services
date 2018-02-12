@@ -3,6 +3,15 @@ services:
     end_point: https://reqres.in
     end_point_suffix: /api
     type: REST
-    content_type: JSON
+    content_type: APP_JSON
     logging:
       log_payload_on_error: true
+  soap_api:
+    end_point: http://www.dneonline.com/calculator.asmx
+    type: SOAP
+    content_type: TEXT_XML
+    logging:
+      log_payload_on_error: true
+      log_only_requests: true
+      log_only_responses: true
+      

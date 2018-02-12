@@ -18,14 +18,12 @@ package com.github.wasiqb.coteafs.services.config;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.restassured.http.ContentType;
-
 /**
  * @author wasiq.bhamla
  * @since Aug 7, 2017 12:40:53 PM
  */
 public class ServiceSetting {
-	private ContentType					contentType;
+	private MediaType					contentType;
 	private String						endPoint;
 	private String						endPointSuffix;
 	private LoggingSetting				logging;
@@ -40,7 +38,7 @@ public class ServiceSetting {
 	public ServiceSetting () {
 		this.params = new HashMap <> ();
 		this.type = ServiceType.SOAP;
-		this.contentType = ContentType.XML;
+		this.contentType = MediaType.TEXT_XML;
 	}
 
 	/**
@@ -48,7 +46,7 @@ public class ServiceSetting {
 	 * @since Aug 25, 2017 9:57:04 PM
 	 * @return the contentType
 	 */
-	public ContentType getContentType () {
+	public MediaType getContentType () {
 		return this.contentType;
 	}
 
@@ -112,7 +110,7 @@ public class ServiceSetting {
 	 * @param contentType
 	 *            the contentType to set
 	 */
-	public void setContentType (final ContentType contentType) {
+	public void setContentType (final MediaType contentType) {
 		this.contentType = contentType;
 	}
 

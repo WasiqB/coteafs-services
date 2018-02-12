@@ -38,7 +38,7 @@ class XmlPayloadLogger implements PayloadLogger {
 			transformer.transform (input, output);
 			return output.getWriter ()
 				.toString ()
-				.split ("\n");
+				.split ("\r\n");
 		}
 		catch (final TransformerException e) {
 			fail (XmlFormatTransformerError.class, "Error while Xml Transformation.", e);

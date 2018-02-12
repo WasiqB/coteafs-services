@@ -18,11 +18,10 @@ package com.github.wasiqb.coteafs.services.response;
 import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
 import static java.lang.String.format;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.github.wasiqb.coteafs.services.error.SoapResponseParsingFailedError;
 
 import io.restassured.path.xml.XmlPath;
+import io.restassured.path.xml.element.Node;
 import io.restassured.response.Response;
 
 /**
@@ -49,17 +48,18 @@ public class SoapResponseValueParser implements ResponseValueParser {
 	 */
 	@Override
 	public <T> T valueOf (final String name, final String path) {
-		if (!StringUtils.isEmpty (name)) {
-			final String root = "Envelope.Body.%s";
-			this.response.then ()
-				.root (String.format (root, name));
-		}
 		final XmlPath xmlPath = XmlPath.with (this.response.asString ());
-		if (StringUtils.isBlank (path)) {
-			return null;
-		}
+		final String root = "Envelope.Body.'**'[0]";
+		final Node first = xmlPath.get (root);
+		final String child = first.children ()
+			.get (0)
+			.name ();
+		final StringBuilder pathBuilder = new StringBuilder ("Envelope.Body.");
+		pathBuilder.append (child)
+			.append (".")
+			.append (path);
 		try {
-			return xmlPath.get (path);
+			return xmlPath.get (pathBuilder.toString ());
 		}
 		catch (final Exception e) {
 			final String message = "Soap Response value parsing failed for [%s] expression.";

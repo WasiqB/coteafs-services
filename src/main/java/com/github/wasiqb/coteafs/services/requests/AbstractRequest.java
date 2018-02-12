@@ -47,9 +47,18 @@ public abstract class AbstractRequest {
 	private final Map <String, Object>	params;
 	private final Map <String, Object>	pathParams;
 	private final Map <String, Object>	queryParams;
-	private final String				resourcePath;
+	private String						resourcePath;
 	private final ServiceSetting		setting;
 	private final Map <String, Object>	values;
+
+	/**
+	 * @author wasiq.bhamla
+	 * @param serviceName
+	 * @since Feb 12, 2018 4:19:46 PM
+	 */
+	public AbstractRequest (final String serviceName) {
+		this (serviceName, null);
+	}
 
 	/**
 	 * @author wasiq.bhamla
@@ -65,7 +74,9 @@ public abstract class AbstractRequest {
 		this.formParams = new HashMap <> ();
 		this.queryParams = new HashMap <> ();
 		this.values = new HashMap <> ();
-		this.resourcePath = String.format ("%s%s", this.setting.getEndPointSuffix (), resourcePath);
+		if (resourcePath != null) {
+			this.resourcePath = String.format ("%s%s", this.setting.getEndPointSuffix (), resourcePath);
+		}
 	}
 
 	/**

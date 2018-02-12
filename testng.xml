@@ -8,6 +8,7 @@
 	<test name="Test">
 		<classes>
 			<class name="com.github.wasiqb.coteafs.services.rest.RestTest" />
+			<class name="com.github.wasiqb.coteafs.services.soap.SoapTest" />
 		</classes>
 	</test> <!-- Android Test -->
 </suite> <!-- coteafs-appium Test Suite -->
