@@ -258,7 +258,7 @@ public class RequestHandler {
 			this.request = this.request.port (port);
 		}
 		if (type != null) {
-			LOG.info (format ("End-point content-tyoe: %s", type));
+			LOG.info (format ("End-point content-type: %s", type));
 			this.request = this.request.contentType (type.toString ());
 		}
 		return this;
