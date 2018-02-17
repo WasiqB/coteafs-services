@@ -15,13 +15,11 @@
  */
 package com.github.wasiqb.coteafs.services.error;
 
-import com.github.wasiqb.coteafs.error.CoteafsError;
-
 /**
  * @author wasiq.bhamla
  * @since Aug 20, 2017 3:22:18 PM
  */
-public class RequestSerializationError extends CoteafsError {
+public class RequestSerializationError extends CoteafsServicesError {
 	private static final long serialVersionUID = 3596023551997444258L;
 
 	/**

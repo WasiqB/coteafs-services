@@ -15,13 +15,11 @@
  */
 package com.github.wasiqb.coteafs.services.error;
 
-import com.github.wasiqb.coteafs.error.CoteafsError;
-
 /**
  * @author wasiq.bhamla
  * @since Sep 24, 2017 2:43:28 PM
  */
-public class RestResponseParsingFailedError extends CoteafsError {
+public class RestResponseParsingFailedError extends CoteafsServicesError {
 	private static final long serialVersionUID = -9039750850618670731L;
 
 	/**

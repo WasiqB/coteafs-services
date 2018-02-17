@@ -15,13 +15,11 @@
  */
 package com.github.wasiqb.coteafs.services.error;
 
-import com.github.wasiqb.coteafs.error.CoteafsError;
-
 /**
  * @author wasiq.bhamla
  * @since Aug 20, 2017 2:19:27 PM
  */
-public class XmlFormatTransformerError extends CoteafsError {
+public class XmlFormatTransformerError extends CoteafsServicesError {
 	private static final long serialVersionUID = -6096088481147971005L;
 
 	/**

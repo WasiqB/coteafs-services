@@ -36,7 +36,7 @@ public class SoapTest {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api");
 		calc.withValue ("intA", 10);
 		calc.withValue ("intB", 10);
-		final ResponseHandler res = calc.execute (RequestMethod.POST, false);
+		final ResponseHandler res = calc.execute (RequestMethod.POST, true);
 
 		final String result = res.valueOf ("AddResult");
 		Truth.assertThat (result)

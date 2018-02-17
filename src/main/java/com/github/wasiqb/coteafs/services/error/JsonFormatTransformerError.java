@@ -15,13 +15,11 @@
  */
 package com.github.wasiqb.coteafs.services.error;
 
-import com.github.wasiqb.coteafs.error.CoteafsError;
-
 /**
  * @author wasiq.bhamla
  * @since Aug 20, 2017 2:48:29 PM
  */
-public class JsonFormatTransformerError extends CoteafsError {
+public class JsonFormatTransformerError extends CoteafsServicesError {
 	private static final long serialVersionUID = 966036466724423779L;
 
 	/**

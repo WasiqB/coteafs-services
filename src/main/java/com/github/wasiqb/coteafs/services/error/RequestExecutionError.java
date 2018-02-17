@@ -17,27 +17,27 @@ package com.github.wasiqb.coteafs.services.error;
 
 /**
  * @author wasiq.bhamla
- * @since Aug 20, 2017 3:09:05 PM
+ * @since Feb 17, 2018 5:57:29 PM
  */
-public class JsonParseError extends CoteafsServicesError {
-	private static final long serialVersionUID = -6366938353752758072L;
+public class RequestExecutionError extends CoteafsServicesError {
+	private static final long serialVersionUID = -4154890876311205224L;
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 20, 2017 3:09:05 PM
+	 * @since Feb 17, 2018 5:57:29 PM
 	 * @param message
 	 */
-	public JsonParseError (final String message) {
+	public RequestExecutionError (final String message) {
 		super (message);
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 20, 2017 3:09:05 PM
+	 * @since Feb 17, 2018 5:57:29 PM
 	 * @param message
 	 * @param cause
 	 */
-	public JsonParseError (final String message, final Throwable cause) {
+	public RequestExecutionError (final String message, final Throwable cause) {
 		super (message, cause);
 	}
 }
