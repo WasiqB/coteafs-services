@@ -65,7 +65,7 @@ public class ServiceSetting {
 	 * @return the endPointSuffix
 	 */
 	public String getEndPointSuffix () {
-		return this.endPointSuffix;
+		return this.endPointSuffix == null ? "" : this.endPointSuffix;
 	}
 
 	/**

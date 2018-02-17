@@ -74,7 +74,7 @@ public abstract class AbstractRequest {
 		this.formParams = new HashMap <> ();
 		this.queryParams = new HashMap <> ();
 		this.values = new HashMap <> ();
-		this.resourcePath = resourcePath;
+		this.resourcePath = resourcePath == null ? "" : resourcePath;
 	}
 
 	/**
