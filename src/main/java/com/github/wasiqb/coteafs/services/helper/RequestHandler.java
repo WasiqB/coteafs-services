@@ -15,7 +15,7 @@
  */
 package com.github.wasiqb.coteafs.services.helper;
 
-import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
+import static com.github.wasiqb.coteafs.services.utils.ErrorUtils.fail;
 import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.format;
 
@@ -31,7 +31,11 @@ import com.github.wasiqb.coteafs.services.config.LoggingSetting;
 import com.github.wasiqb.coteafs.services.config.MediaType;
 import com.github.wasiqb.coteafs.services.config.ServiceSetting;
 import com.github.wasiqb.coteafs.services.config.ServiceType;
+import com.github.wasiqb.coteafs.services.error.ClientSideError;
+import com.github.wasiqb.coteafs.services.error.RequestExecutionError;
 import com.github.wasiqb.coteafs.services.error.RequestExecutionFailedError;
+import com.github.wasiqb.coteafs.services.error.ServerSideError;
+import com.github.wasiqb.coteafs.services.error.ServiceNotFoundError;
 import com.github.wasiqb.coteafs.services.formatter.PayloadLoggerFactory;
 import com.github.wasiqb.coteafs.services.formatter.PayloadType;
 import com.github.wasiqb.coteafs.services.parser.RequestFactory;
@@ -90,6 +94,19 @@ public class RequestHandler {
 		}
 	}
 
+	private static void validateResponse (final Response res) {
+		final int status = res.getStatusCode ();
+		if (status == 404) {
+			fail (ServiceNotFoundError.class, "Service Not found.");
+		}
+		else if (status >= 400 && status < 500) {
+			fail (ClientSideError.class, "Client side error.");
+		}
+		else if (status >= 500) {
+			fail (ServerSideError.class, "Server side error,");
+		}
+	}
+
 	private String					name;
 	private RequestSpecification	request;
 	private String					resource;
@@ -110,11 +127,15 @@ public class RequestHandler {
 		try {
 			setSoapHeaders ();
 			final Response res = this.request.request (method);
+			validateResponse (res);
 			this.response = new ResponseHandler (this.name, res, this.setting);
 			if (shouldWork) {
 				assertThat (res.statusCode ()).isGreaterThan (199);
 				assertThat (res.statusCode ()).isLessThan (300);
 			}
+		}
+		catch (final RequestExecutionFailedError e) {
+			fail (RequestExecutionError.class, "Execution failed", e);
 		}
 		catch (final Exception e) {
 			fail (RequestExecutionFailedError.class, "Execute failed:", e);
@@ -246,9 +267,10 @@ public class RequestHandler {
 	public RequestHandler using () {
 		final String endPoint = this.setting.getEndPoint ();
 		final int port = this.setting.getPort ();
+		final String suffix = this.setting.getEndPointSuffix ();
 		final MediaType type = this.setting.getContentType ();
 		this.request = RestAssured.given ()
-			.baseUri (endPoint);
+			.baseUri (endPoint + suffix);
 		LOG.info (LINE);
 		LOG.info ("Preparing to execute request with following parameters:");
 		LOG.info (LINE);
