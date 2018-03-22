@@ -107,7 +107,9 @@ public class RequestHandler {
 		}
 	}
 
+	private String					endPoint;
 	private String					name;
+	private int						port;
 	private RequestSpecification	request;
 	private String					resource;
 	private ResponseHandler			response;
@@ -138,7 +140,7 @@ public class RequestHandler {
 			fail (RequestExecutionError.class, "Execution failed", e);
 		}
 		catch (final Exception e) {
-			fail (RequestExecutionFailedError.class, "Execute failed:", e);
+			fail (ServiceNotFoundError.class, "Service not found.", e);
 		}
 		return this;
 	}
@@ -265,19 +267,20 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler using () {
-		final String endPoint = this.setting.getEndPoint ();
-		final int port = this.setting.getPort ();
+		this.endPoint = this.setting.getEndPoint ();
+		this.port = this.setting.getPort ();
 		final String suffix = this.setting.getEndPointSuffix ();
 		final MediaType type = this.setting.getContentType ();
+
 		this.request = RestAssured.given ()
-			.baseUri (endPoint + suffix);
+			.baseUri (this.endPoint + suffix);
 		LOG.info (LINE);
 		LOG.info ("Preparing to execute request with following parameters:");
 		LOG.info (LINE);
-		LOG.info (format ("End-point url: %s", endPoint));
-		if (port > 0) {
-			LOG.info (format ("End-point port: %d", port));
-			this.request = this.request.port (port);
+		LOG.info (format ("End-point url: %s", this.endPoint));
+		if (this.port > 0) {
+			LOG.info (format ("End-point port: %d", this.port));
+			this.request = this.request.port (this.port);
 		}
 		if (type != null) {
 			LOG.info (format ("End-point content-type: %s", type));
@@ -295,7 +298,7 @@ public class RequestHandler {
 	public RequestHandler with (final RequestElement requestElement) {
 		if (requestElement != null) {
 			this.name = requestElement.name ();
-			final RequestParser builder = RequestFactory.getParser (this.setting.getType ())
+			final RequestParser builder = RequestFactory.getParser (this.setting)
 				.build (requestElement);
 			final String body = builder.body ();
 			return with (body, this.setting.getLogging ());

@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
+import com.github.wasiqb.coteafs.services.config.SoapProtocol;
 import com.github.wasiqb.coteafs.services.error.SoapParserInitError;
 import com.github.wasiqb.coteafs.services.error.SoapRequestParsingFailedError;
 import com.github.wasiqb.coteafs.services.requests.RequestAttribute;
@@ -43,11 +44,12 @@ import com.github.wasiqb.coteafs.services.requests.RequestElement;
 public class SoapRequestParser implements RequestParser {
 	/**
 	 * @author wasiq.bhamla
+	 * @param soapProtocol
 	 * @since Aug 26, 2017 4:10:40 PM
 	 * @return parser
 	 */
-	public static RequestParser create () {
-		return new SoapRequestParser ();
+	public static RequestParser create (final SoapProtocol soapProtocol) {
+		return new SoapRequestParser (soapProtocol);
 	}
 
 	/**
@@ -98,11 +100,12 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @param soapProtocol
 	 * @since Aug 26, 2017 4:11:08 PM
 	 */
-	private SoapRequestParser () {
+	private SoapRequestParser (final SoapProtocol soapProtocol) {
 		try {
-			init ();
+			init (soapProtocol);
 		}
 		catch (final SOAPException e) {
 			fail (SoapParserInitError.class, "Soap Parser Init failed.", e);
@@ -185,11 +188,12 @@ public class SoapRequestParser implements RequestParser {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @param soapProtocol
 	 * @since Aug 26, 2017 4:11:43 PM
 	 * @throws SOAPException
 	 */
-	private void init () throws SOAPException {
-		final MessageFactory factory = MessageFactory.newInstance ();
+	private void init (final SoapProtocol soapProtocol) throws SOAPException {
+		final MessageFactory factory = MessageFactory.newInstance (soapProtocol.toString ());
 		this.soapMessage = factory.createMessage ();
 		final SOAPPart soapPart = this.soapMessage.getSOAPPart ();
 		this.soapEnv = soapPart.getEnvelope ();

@@ -15,6 +15,8 @@
  */
 package com.github.wasiqb.coteafs.services.parser;
 
+import static com.github.wasiqb.coteafs.services.utils.ErrorUtils.fail;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
@@ -22,8 +24,8 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
-import org.testng.Assert;
 
+import com.github.wasiqb.coteafs.services.error.JsonParseError;
 import com.github.wasiqb.coteafs.services.requests.RequestElement;
 
 /**
@@ -53,7 +55,7 @@ public class RestRequestParser implements RequestParser {
 			this.obj.writeJSONString (out);
 		}
 		catch (final IOException e) {
-			Assert.fail ("Failed to parse JSON string", e);
+			fail (JsonParseError.class, "Failed to parse JSON string", e);
 		}
 		return out.toString ();
 	}

@@ -13,36 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.wasiqb.coteafs.services.parser;
+package com.github.wasiqb.coteafs.services.config;
 
-import com.github.wasiqb.coteafs.services.config.ServiceSetting;
+import javax.xml.soap.SOAPConstants;
 
 /**
  * @author wasiq.bhamla
- * @since Aug 26, 2017 3:47:22 PM
+ * @since Mar 15, 2018 9:51:05 PM
  */
-public final class RequestFactory {
+public enum SoapProtocol {
 	/**
-	 * @author wasiq.bhamla
-	 * @since Aug 26, 2017 3:47:26 PM
-	 * @param setting
-	 * @return parser
+	 * Soap 1.1 protocol.
 	 */
-	public static RequestParser getParser (final ServiceSetting setting) {
-		switch (setting.getType ()) {
-			case REST:
-				return RestRequestParser.create ();
-			case SOAP:
-			default:
-				return SoapRequestParser.create (setting.getProtocol ());
-		}
+	SOAP_1_1 (SOAPConstants.SOAP_1_1_PROTOCOL),
+	/**
+	 * Soap 1.2 protocol.
+	 */
+	SOAP_1_2 (SOAPConstants.SOAP_1_2_PROTOCOL);
+
+	private String protocol;
+
+	private SoapProtocol (final String protocol) {
+		this.protocol = protocol;
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 24, 2017 2:10:46 PM
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Enum#toString()
 	 */
-	private RequestFactory () {
-		// Utility class.
+	@Override
+	public String toString () {
+		return this.protocol;
 	}
 }

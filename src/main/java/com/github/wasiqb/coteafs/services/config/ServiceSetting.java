@@ -29,6 +29,7 @@ public class ServiceSetting {
 	private LoggingSetting				logging;
 	private final Map <String, Object>	params;
 	private int							port;
+	private SoapProtocol				protocol;
 	private ServiceType					type;
 
 	/**
@@ -39,6 +40,7 @@ public class ServiceSetting {
 		this.params = new HashMap <> ();
 		this.type = ServiceType.SOAP;
 		this.contentType = MediaType.TEXT_XML;
+		this.protocol = SoapProtocol.SOAP_1_1;
 	}
 
 	/**
@@ -93,6 +95,15 @@ public class ServiceSetting {
 	 */
 	public int getPort () {
 		return this.port;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 15, 2018 10:00:27 PM
+	 * @return the protocol
+	 */
+	public SoapProtocol getProtocol () {
+		return this.protocol;
 	}
 
 	/**
@@ -152,6 +163,16 @@ public class ServiceSetting {
 	 */
 	public void setPort (final int port) {
 		this.port = port;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 15, 2018 10:00:27 PM
+	 * @param protocol
+	 *            the protocol to set
+	 */
+	public void setProtocol (final SoapProtocol protocol) {
+		this.protocol = protocol;
 	}
 
 	/**

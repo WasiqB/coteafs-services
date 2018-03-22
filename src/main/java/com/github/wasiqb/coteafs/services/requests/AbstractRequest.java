@@ -79,26 +79,62 @@ public abstract class AbstractRequest {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Aug 25, 2017 10:14:51 PM
-	 * @param method
+	 * @since Mar 19, 2018 10:13:32 PM
 	 * @param shouldWork
-	 * @return response handler
+	 * @return response
 	 */
-	public ResponseHandler execute (final RequestMethod method, final boolean shouldWork) {
-		RequestHandler handler = RequestHandler.build ()
-			.setting (this.setting)
-			.using ()
-			.resource (this.resourcePath);
-		if (method != RequestMethod.GET) {
-			handler = handler.with (prepare ());
-		}
-		setHeaders (handler);
-		setParams (handler);
-		setFormParams (handler);
-		setQueryParams (handler);
-		setPathParams (handler);
-		return handler.execute (method.getMethod (), shouldWork)
-			.response ();
+	public ResponseHandler delete (final boolean shouldWork) {
+		return execute (RequestMethod.DELETE, shouldWork);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:13:24 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler get (final boolean shouldWork) {
+		return execute (RequestMethod.GET, shouldWork);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:13:18 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler head (final boolean shouldWork) {
+		return execute (RequestMethod.HEAD, shouldWork);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:13:11 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler options (final boolean shouldWork) {
+		return execute (RequestMethod.OPTIONS, shouldWork);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:13:01 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler patch (final boolean shouldWork) {
+		return execute (RequestMethod.PATCH, shouldWork);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:12:54 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler post (final boolean shouldWork) {
+		return execute (RequestMethod.POST, shouldWork);
 	}
 
 	/**
@@ -107,6 +143,26 @@ public abstract class AbstractRequest {
 	 * @since Sep 21, 2017 10:38:06 AM
 	 */
 	public abstract RequestElement prepare ();
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:12:48 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler put (final boolean shouldWork) {
+		return execute (RequestMethod.PUT, shouldWork);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 19, 2018 10:12:30 PM
+	 * @param shouldWork
+	 * @return response
+	 */
+	public ResponseHandler trace (final boolean shouldWork) {
+		return execute (RequestMethod.TRACE, shouldWork);
+	}
 
 	/**
 	 * @author wasiq.bhamla
@@ -189,6 +245,23 @@ public abstract class AbstractRequest {
 	@SuppressWarnings ("unchecked")
 	protected <V> V get (final String fieldName) {
 		return (V) this.values.get (fieldName);
+	}
+
+	private ResponseHandler execute (final RequestMethod method, final boolean shouldWork) {
+		RequestHandler handler = RequestHandler.build ()
+			.setting (this.setting)
+			.using ()
+			.resource (this.resourcePath);
+		if (method != RequestMethod.GET) {
+			handler = handler.with (prepare ());
+		}
+		setHeaders (handler);
+		setParams (handler);
+		setFormParams (handler);
+		setQueryParams (handler);
+		setPathParams (handler);
+		return handler.execute (method.getMethod (), shouldWork)
+			.response ();
 	}
 
 	/**
