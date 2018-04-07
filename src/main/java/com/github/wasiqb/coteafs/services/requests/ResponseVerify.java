@@ -43,7 +43,7 @@ public class ResponseVerify {
 	 * @since Apr 1, 2018 9:56:24 PM
 	 * @param actual
 	 */
-	public void equalsTo (final String actual) {
+	public <T> void equalsTo (final T actual) {
 		assertThat (actual).isEqualTo (this.response.valueOf (this.expression));
 	}
 
@@ -52,7 +52,7 @@ public class ResponseVerify {
 	 * @since Apr 1, 2018 10:12:14 PM
 	 * @param actual
 	 */
-	public void notEqualsTo (final String actual) {
+	public <T> void notEqualsTo (final T actual) {
 		assertThat (actual).isNotEqualTo (this.response.valueOf (this.expression));
 	}
 }
