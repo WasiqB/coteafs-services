@@ -15,12 +15,10 @@
  */
 package com.github.wasiqb.coteafs.services.rest;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import org.testng.annotations.Test;
 
 import com.github.wasiqb.coteafs.services.error.ServiceNotFoundError;
-import com.github.wasiqb.coteafs.services.helper.ResponseHandler;
+import com.github.wasiqb.coteafs.services.requests.AbstractRequest;
 import com.github.wasiqb.coteafs.services.rest.request.UserRequest;
 
 /**
@@ -35,12 +33,12 @@ public class RestTest {
 	@Test
 	public void testSingleUser () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		final ResponseHandler res = user.get (true);
+		final AbstractRequest response = user.get (true);
+		response.verifyThat ("data.first_name")
+			.equalsTo ("Janet");
 
-		final String firstName = res.valueOf ("data.first_name");
-		assertThat (firstName).isEqualTo ("Janet");
-		final String lastName = res.valueOf ("data.last_name");
-		assertThat (lastName).isEqualTo ("Weaver");
+		response.verifyThat ("data.last_name")
+			.equalsTo ("Weaver");
 	}
 
 	/**
@@ -62,12 +60,12 @@ public class RestTest {
 		final UserRequest user = new UserRequest ("first_api");
 		user.withValue ("name", "morpheus");
 		user.withValue ("job", "leader");
-		final ResponseHandler res = user.post (true);
+		final AbstractRequest res = user.post (true);
 
-		final String firstName = res.valueOf ("name");
-		assertThat (firstName).isEqualTo ("morpheus");
-		final String lastName = res.valueOf ("job");
-		assertThat (lastName).isEqualTo ("leader");
+		res.verifyThat ("name")
+			.equalsTo ("morpheus");
+		res.verifyThat ("job")
+			.equalsTo ("leader");
 	}
 
 	/**
@@ -88,12 +86,12 @@ public class RestTest {
 	public void testUserList () {
 		final UserRequest user = new UserRequest ("first_api");
 		user.withQueryParameter ("page", 2);
-		final ResponseHandler res = user.get (true);
+		final AbstractRequest res = user.get (true);
 
-		final String firstName = res.valueOf ("data.find { it.id == 4 }.first_name");
-		assertThat (firstName).isEqualTo ("Eve");
-		final String lastName = res.valueOf ("data.find { it.id == 4 }.last_name");
-		assertThat (lastName).isEqualTo ("Holt");
+		res.verifyThat ("data.find { it.id == 4 }.first_name")
+			.equalsTo ("Eve");
+		res.verifyThat ("data.find { it.id == 4 }.last_name")
+			.equalsTo ("Holt");
 	}
 
 	/**
@@ -105,12 +103,12 @@ public class RestTest {
 		final UserRequest user = new UserRequest ("first_api", 2);
 		user.withValue ("name", "morpheus");
 		user.withValue ("job", "zion resident");
-		final ResponseHandler res = user.patch (true);
+		final AbstractRequest res = user.patch (true);
 
-		final String firstName = res.valueOf ("name");
-		assertThat (firstName).isEqualTo ("morpheus");
-		final String lastName = res.valueOf ("job");
-		assertThat (lastName).isEqualTo ("zion resident");
+		res.verifyThat ("name")
+			.equalsTo ("morpheus");
+		res.verifyThat ("job")
+			.equalsTo ("zion resident");
 	}
 
 	/**
@@ -122,11 +120,11 @@ public class RestTest {
 		final UserRequest user = new UserRequest ("first_api", 2);
 		user.withValue ("name", "morpheus");
 		user.withValue ("job", "zion resident");
-		final ResponseHandler res = user.put (true);
+		final AbstractRequest res = user.put (true);
 
-		final String firstName = res.valueOf ("name");
-		assertThat (firstName).isEqualTo ("morpheus");
-		final String lastName = res.valueOf ("job");
-		assertThat (lastName).isEqualTo ("zion resident");
+		res.verifyThat ("name")
+			.equalsTo ("morpheus");
+		res.verifyThat ("job")
+			.equalsTo ("zion resident");
 	}
 }

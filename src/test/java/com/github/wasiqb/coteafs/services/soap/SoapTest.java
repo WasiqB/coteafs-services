@@ -18,9 +18,8 @@ package com.github.wasiqb.coteafs.services.soap;
 import org.testng.annotations.Test;
 
 import com.github.wasiqb.coteafs.services.error.ServiceNotFoundError;
-import com.github.wasiqb.coteafs.services.helper.ResponseHandler;
+import com.github.wasiqb.coteafs.services.requests.AbstractRequest;
 import com.github.wasiqb.coteafs.services.soap.request.CalculatorRequest;
-import com.google.common.truth.Truth;
 
 /**
  * @author wasiq.bhamla
@@ -36,11 +35,10 @@ public class SoapTest {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api");
 		calc.withValue ("intA", 10);
 		calc.withValue ("intB", 10);
-		final ResponseHandler res = calc.post (true);
+		final AbstractRequest res = calc.post (true);
 
-		final String result = res.valueOf ("AddResult");
-		Truth.assertThat (result)
-			.isEqualTo ("20");
+		res.verifyThat ("AddResult")
+			.equalsTo ("20");
 	}
 
 	/**
@@ -52,11 +50,10 @@ public class SoapTest {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api_12");
 		calc.withValue ("intA", 10);
 		calc.withValue ("intB", 10);
-		final ResponseHandler res = calc.post (true);
+		final AbstractRequest res = calc.post (true);
 
-		final String result = res.valueOf ("AddResult");
-		Truth.assertThat (result)
-			.isEqualTo ("20");
+		res.verifyThat ("AddResult")
+			.equalsTo ("20");
 	}
 
 	/**

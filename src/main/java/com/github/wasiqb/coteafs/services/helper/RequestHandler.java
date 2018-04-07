@@ -107,9 +107,7 @@ public class RequestHandler {
 		}
 	}
 
-	private String					endPoint;
 	private String					name;
-	private int						port;
 	private RequestSpecification	request;
 	private String					resource;
 	private ResponseHandler			response;
@@ -267,20 +265,20 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler using () {
-		this.endPoint = this.setting.getEndPoint ();
-		this.port = this.setting.getPort ();
+		final String endPoint = this.setting.getEndPoint ();
+		final int port = this.setting.getPort ();
 		final String suffix = this.setting.getEndPointSuffix ();
 		final MediaType type = this.setting.getContentType ();
 
 		this.request = RestAssured.given ()
-			.baseUri (this.endPoint + suffix);
+			.baseUri (endPoint + suffix);
 		LOG.info (LINE);
 		LOG.info ("Preparing to execute request with following parameters:");
 		LOG.info (LINE);
-		LOG.info (format ("End-point url: %s", this.endPoint));
-		if (this.port > 0) {
-			LOG.info (format ("End-point port: %d", this.port));
-			this.request = this.request.port (this.port);
+		LOG.info (format ("End-point url: %s", endPoint));
+		if (port > 0) {
+			LOG.info (format ("End-point port: %d", port));
+			this.request = this.request.port (port);
 		}
 		if (type != null) {
 			LOG.info (format ("End-point content-type: %s", type));

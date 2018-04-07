@@ -48,6 +48,7 @@ public abstract class AbstractRequest {
 	private final Map <String, Object>	pathParams;
 	private final Map <String, Object>	queryParams;
 	private final String				resourcePath;
+	private ResponseHandler				response;
 	private final ServiceSetting		setting;
 	private final Map <String, Object>	values;
 
@@ -83,8 +84,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler delete (final boolean shouldWork) {
-		return execute (RequestMethod.DELETE, shouldWork);
+	public AbstractRequest delete (final boolean shouldWork) {
+		this.response = execute (RequestMethod.DELETE, shouldWork);
+		return this;
 	}
 
 	/**
@@ -93,8 +95,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler get (final boolean shouldWork) {
-		return execute (RequestMethod.GET, shouldWork);
+	public AbstractRequest get (final boolean shouldWork) {
+		this.response = execute (RequestMethod.GET, shouldWork);
+		return this;
 	}
 
 	/**
@@ -103,8 +106,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler head (final boolean shouldWork) {
-		return execute (RequestMethod.HEAD, shouldWork);
+	public AbstractRequest head (final boolean shouldWork) {
+		this.response = execute (RequestMethod.HEAD, shouldWork);
+		return this;
 	}
 
 	/**
@@ -113,8 +117,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler options (final boolean shouldWork) {
-		return execute (RequestMethod.OPTIONS, shouldWork);
+	public AbstractRequest options (final boolean shouldWork) {
+		this.response = execute (RequestMethod.OPTIONS, shouldWork);
+		return this;
 	}
 
 	/**
@@ -123,8 +128,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler patch (final boolean shouldWork) {
-		return execute (RequestMethod.PATCH, shouldWork);
+	public AbstractRequest patch (final boolean shouldWork) {
+		this.response = execute (RequestMethod.PATCH, shouldWork);
+		return this;
 	}
 
 	/**
@@ -133,8 +139,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler post (final boolean shouldWork) {
-		return execute (RequestMethod.POST, shouldWork);
+	public AbstractRequest post (final boolean shouldWork) {
+		this.response = execute (RequestMethod.POST, shouldWork);
+		return this;
 	}
 
 	/**
@@ -150,8 +157,9 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler put (final boolean shouldWork) {
-		return execute (RequestMethod.PUT, shouldWork);
+	public AbstractRequest put (final boolean shouldWork) {
+		this.response = execute (RequestMethod.PUT, shouldWork);
+		return this;
 	}
 
 	/**
@@ -160,8 +168,19 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public ResponseHandler trace (final boolean shouldWork) {
-		return execute (RequestMethod.TRACE, shouldWork);
+	public AbstractRequest trace (final boolean shouldWork) {
+		this.response = execute (RequestMethod.TRACE, shouldWork);
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Apr 1, 2018 9:59:56 PM
+	 * @param expression
+	 * @return response verify
+	 */
+	public ResponseVerify verifyThat (final String expression) {
+		return new ResponseVerify (this.response, expression);
 	}
 
 	/**
