@@ -159,8 +159,6 @@ public class ResponseHandler {
 	 */
 	private void logResponseInfo () {
 		LOG.info (String.format ("Request executed in [%.2f] secs...", time ()));
-		LOG.info (String.format ("Status Code: [%d]...", statusCode ()));
-		LOG.info (String.format ("Status Message: [%s]...", statusLine ()));
 		logHeaders ();
 		logResponse ();
 	}

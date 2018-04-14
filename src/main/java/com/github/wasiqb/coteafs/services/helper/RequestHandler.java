@@ -96,6 +96,8 @@ public class RequestHandler {
 
 	private static void validateResponse (final Response res) {
 		final int status = res.statusCode ();
+		LOG.info (String.format ("Status Code: [%d]...", status));
+		LOG.info (String.format ("Status Message: [%s]...", res.statusLine ()));
 		if (status == 404) {
 			fail (ServiceNotFoundError.class, "Service Not found.");
 		}
