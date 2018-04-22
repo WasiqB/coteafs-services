@@ -18,6 +18,8 @@ package com.github.wasiqb.coteafs.services.response;
 import static com.github.wasiqb.coteafs.error.util.ErrorUtil.fail;
 import static java.lang.String.format;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.wasiqb.coteafs.services.error.RestResponseParsingFailedError;
@@ -43,12 +45,11 @@ public class RestResponseValueParser implements ResponseValueParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.github.wasiqb.coteafs.services.response.ResponseValueParser#valueOf(java.lang.String,
+	 * @see com.github.wasiqb.coteafs.services.response.ResponseValueParser#valueOf(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public <T> T valueOf (final String name, final String path) {
+	public <T> Optional <T> valueOf (final String name, final String path) {
 		if (!StringUtils.isEmpty (name)) {
 			this.response.then ()
 				.root (name);
@@ -58,7 +59,7 @@ public class RestResponseValueParser implements ResponseValueParser {
 			return null;
 		}
 		try {
-			return jsonPath.get (path);
+			return Optional.of (jsonPath.get (path));
 		}
 		catch (final Exception e) {
 			final String message = "Response value parsing failed for [%s] expression.";

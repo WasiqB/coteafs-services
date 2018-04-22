@@ -44,7 +44,8 @@ public class ResponseVerify {
 	 * @param actual
 	 */
 	public <T> void equalsTo (final T actual) {
-		assertThat (actual).isEqualTo (this.response.valueOf (this.expression));
+		assertThat (actual).isEqualTo (this.response.valueOf (this.expression)
+			.get ());
 	}
 
 	/**
@@ -53,6 +54,7 @@ public class ResponseVerify {
 	 * @param actual
 	 */
 	public <T> void notEqualsTo (final T actual) {
-		assertThat (actual).isNotEqualTo (this.response.valueOf (this.expression));
+		assertThat (actual).isNotEqualTo (this.response.valueOf (this.expression)
+			.get ());
 	}
 }

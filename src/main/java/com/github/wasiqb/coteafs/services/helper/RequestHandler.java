@@ -80,13 +80,16 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public static RequestHandler build () {
+		LOG.info (LINE);
+		LOG.info ("Preparing to execute request:");
+		LOG.info (LINE);
 		return new RequestHandler ();
 	}
 
 	private static void logMap (final String mapName, final Map <String, Object> map) {
 		if (!map.isEmpty ()) {
 			LOG.info (LINE);
-			LOG.info (String.format ("Following %s is used", mapName));
+			LOG.info (format ("Following %s is used", mapName));
 			LOG.info (LINE);
 			for (final Entry <String, Object> key : map.entrySet ()) {
 				LOG.info (format ("%s: %s", key.getKey (), key.getValue ()));
@@ -94,10 +97,16 @@ public class RequestHandler {
 		}
 	}
 
+	private static void logStatusDetails (final Response res) {
+		LOG.info (LINE);
+		LOG.info ("Response Status:");
+		LOG.info (LINE);
+		LOG.info (format ("Status Code: [%d]...", res.statusCode ()));
+		LOG.info (format ("Status Message: [%s]...", res.statusLine ()));
+	}
+
 	private static void validateResponse (final Response res) {
 		final int status = res.statusCode ();
-		LOG.info (String.format ("Status Code: [%d]...", status));
-		LOG.info (String.format ("Status Message: [%s]...", res.statusLine ()));
 		if (status == 404) {
 			fail (ServiceNotFoundError.class, "Service Not found.");
 		}
@@ -123,12 +132,11 @@ public class RequestHandler {
 	 * @return instance
 	 */
 	public RequestHandler execute (final Method method, final boolean shouldWork) {
-		LOG.info (LINE);
-		LOG.info (format ("Executing request with method [%s]...", method));
-		LOG.info (LINE);
+		LOG.info (format ("Executing request on [%s] with method [%s]...", url (), method));
 		try {
 			setSoapHeaders ();
 			final Response res = this.request.request (method);
+			logStatusDetails (res);
 			validateResponse (res);
 			this.response = new ResponseHandler (this.name, res, this.setting);
 			if (shouldWork) {
@@ -224,7 +232,6 @@ public class RequestHandler {
 	public RequestHandler resource (final String path) {
 		this.resource = path;
 		if (!StringUtils.isEmpty (this.resource)) {
-			LOG.info (format ("End-point resource: %s", this.resource));
 			this.request = this.request.basePath (this.resource);
 		}
 		return this;
@@ -256,8 +263,14 @@ public class RequestHandler {
 	 * @return url
 	 */
 	public String url () {
+		final int port = this.setting.getPort ();
 		final StringBuilder path = new StringBuilder (this.setting.getEndPoint ());
-		path.append (this.resource);
+		if (port > 0) {
+			path.append (":")
+				.append (port);
+		}
+		path.append (this.setting.getEndPointSuffix ())
+			.append (this.resource);
 		return path.toString ();
 	}
 
@@ -268,20 +281,11 @@ public class RequestHandler {
 	 */
 	public RequestHandler using () {
 		final String endPoint = this.setting.getEndPoint ();
-		final int port = this.setting.getPort ();
 		final String suffix = this.setting.getEndPointSuffix ();
 		final MediaType type = this.setting.getContentType ();
 
 		this.request = RestAssured.given ()
 			.baseUri (endPoint + suffix);
-		LOG.info (LINE);
-		LOG.info ("Preparing to execute request with following parameters:");
-		LOG.info (LINE);
-		LOG.info (format ("End-point url: %s", endPoint));
-		if (port > 0) {
-			LOG.info (format ("End-point port: %d", port));
-			this.request = this.request.port (port);
-		}
 		if (type != null) {
 			LOG.info (format ("End-point content-type: %s", type));
 			this.request = this.request.contentType (type.toString ());

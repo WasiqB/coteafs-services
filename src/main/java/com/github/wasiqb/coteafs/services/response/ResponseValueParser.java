@@ -15,6 +15,8 @@
  */
 package com.github.wasiqb.coteafs.services.response;
 
+import java.util.Optional;
+
 /**
  * @author wasiq.bhamla
  * @since Aug 24, 2017 8:38:20 PM
@@ -27,5 +29,5 @@ public interface ResponseValueParser {
 	 * @param path
 	 * @return value from response
 	 */
-	<T> T valueOf (String name, String path);
+	<T> Optional <T> valueOf (String name, String path);
 }

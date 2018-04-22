@@ -17,6 +17,8 @@ package com.github.wasiqb.coteafs.services.helper;
 
 import static java.lang.String.format;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -117,7 +119,7 @@ public class ResponseHandler {
 	 * @param expression
 	 * @return value
 	 */
-	public <T> T valueOf (final String expression) {
+	public <T> Optional <T> valueOf (final String expression) {
 		ResponseValueParser parser = new SoapResponseValueParser (this.response);
 		if (this.setting.getType () == ServiceType.REST) {
 			parser = new RestResponseValueParser (this.response);
