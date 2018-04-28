@@ -44,7 +44,8 @@ public class SoapResponseValueParser implements ResponseValueParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.response.ResponseValueParser#valueOf(java.lang.String,
+	 * @see
+	 * com.github.wasiqb.coteafs.services.response.ResponseValueParser#valueOf(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -66,6 +67,6 @@ public class SoapResponseValueParser implements ResponseValueParser {
 			final String message = "Soap Response value parsing failed for [%s] expression.";
 			fail (SoapResponseParsingFailedError.class, format (message, path), e);
 		}
-		return null;
+		return Optional.empty ();
 	}
 }

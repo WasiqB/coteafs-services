@@ -17,6 +17,8 @@ package com.github.wasiqb.coteafs.services.requests;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import java.util.Optional;
+
 import com.github.wasiqb.coteafs.services.helper.ResponseHandler;
 
 /**
@@ -44,8 +46,9 @@ public class ResponseVerify {
 	 * @param actual
 	 */
 	public <T> void equalsTo (final T actual) {
-		assertThat (actual).isEqualTo (this.response.valueOf (this.expression)
-			.get ());
+		final Optional <Object> expected = this.response.valueOf (this.expression);
+		assertThat (expected.isPresent ()).isTrue ();
+		assertThat (actual).isEqualTo (expected.get ());
 	}
 
 	/**
@@ -54,7 +57,8 @@ public class ResponseVerify {
 	 * @param actual
 	 */
 	public <T> void notEqualsTo (final T actual) {
-		assertThat (actual).isNotEqualTo (this.response.valueOf (this.expression)
-			.get ());
+		final Optional <Object> expected = this.response.valueOf (this.expression);
+		assertThat (expected.isPresent ()).isTrue ();
+		assertThat (actual).isNotEqualTo (expected.get ());
 	}
 }

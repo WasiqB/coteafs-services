@@ -45,7 +45,8 @@ public class RestResponseValueParser implements ResponseValueParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.github.wasiqb.coteafs.services.response.ResponseValueParser#valueOf(java.lang.String,
+	 * @see
+	 * com.github.wasiqb.coteafs.services.response.ResponseValueParser#valueOf(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -56,7 +57,7 @@ public class RestResponseValueParser implements ResponseValueParser {
 		}
 		final JsonPath jsonPath = JsonPath.from (this.response.asString ());
 		if (StringUtils.isBlank (path)) {
-			return null;
+			return Optional.empty ();
 		}
 		try {
 			return Optional.of (jsonPath.get (path));
@@ -65,6 +66,6 @@ public class RestResponseValueParser implements ResponseValueParser {
 			final String message = "Response value parsing failed for [%s] expression.";
 			fail (RestResponseParsingFailedError.class, format (message, path), e);
 		}
-		return null;
+		return Optional.empty ();
 	}
 }
