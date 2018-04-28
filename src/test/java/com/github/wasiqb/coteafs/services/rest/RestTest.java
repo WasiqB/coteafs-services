@@ -127,4 +127,19 @@ public class RestTest {
 		res.verifyThat ("job")
 			.equalsTo ("zion resident");
 	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Apr 28, 2018 9:28:11 PM
+	 */
+	@Test
+	public void testWithQueryParam () {
+		final UserRequest user = new UserRequest ("first_api");
+		user.withQueryParameter ("delay", "3");
+		final AbstractRequest response = user.get (true);
+		response.verifyThat ("page")
+			.equalsTo (1);
+		response.verifyThat ("total")
+			.equalsTo (12);
+	}
 }
