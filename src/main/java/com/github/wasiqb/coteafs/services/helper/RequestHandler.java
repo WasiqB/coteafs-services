@@ -19,7 +19,9 @@ import static com.github.wasiqb.coteafs.services.utils.ErrorUtils.fail;
 import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.format;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -177,6 +179,23 @@ public class RequestHandler {
 		if (headers != null && headers.size () > 0) {
 			logMap ("Request Headers", headers);
 			this.request = this.request.headers (headers);
+		}
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since May 12, 2018 7:02:53 PM
+	 * @param files
+	 * @return instance
+	 */
+	public RequestHandler multiPart (final List <String> files) {
+		LOG.info (LINE);
+		LOG.info ("Following files is used");
+		LOG.info (LINE);
+		for (final String file : files) {
+			LOG.info (format ("File: %s", file));
+			this.request = this.request.multiPart (new File (file));
 		}
 		return this;
 	}

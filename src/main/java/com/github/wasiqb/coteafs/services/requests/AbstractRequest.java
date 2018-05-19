@@ -18,7 +18,9 @@ package com.github.wasiqb.coteafs.services.requests;
 import static com.github.wasiqb.coteafs.services.config.ConfigConstants.SERVICE_CONFIG_DEFAULT_FILE_NAME;
 import static com.github.wasiqb.coteafs.services.config.ConfigConstants.SERVICE_CONFIG_KEY;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.wasiqb.coteafs.config.loader.ConfigLoader;
@@ -42,6 +44,7 @@ public abstract class AbstractRequest {
 			.load (ServicesSetting.class);
 	}
 
+	private final List <String>			files;
 	private final Map <String, Object>	formParams;
 	private final Map <String, Object>	headers;
 	private final Map <String, Object>	params;
@@ -75,6 +78,7 @@ public abstract class AbstractRequest {
 		this.formParams = new HashMap <> ();
 		this.queryParams = new HashMap <> ();
 		this.values = new HashMap <> ();
+		this.files = new ArrayList <> ();
 		this.resourcePath = resourcePath == null ? "" : resourcePath;
 	}
 
@@ -185,6 +189,17 @@ public abstract class AbstractRequest {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @since May 12, 2018 7:07:54 PM
+	 * @param filePath
+	 * @return instance
+	 */
+	public AbstractRequest withFile (final String filePath) {
+		this.files.add (filePath);
+		return this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
 	 * @since Sep 9, 2017 10:18:17 PM
 	 * @param name
 	 * @param value
@@ -279,8 +294,18 @@ public abstract class AbstractRequest {
 		setFormParams (handler);
 		setQueryParams (handler);
 		setPathParams (handler);
+		setFiles (handler);
 		return handler.execute (method.getMethod (), shouldWork)
 			.response ();
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since May 12, 2018 7:08:20 PM
+	 * @param handler
+	 */
+	private void setFiles (final RequestHandler handler) {
+		handler.multiPart (this.files);
 	}
 
 	/**
