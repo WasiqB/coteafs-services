@@ -1,7 +1,9 @@
-/settings/
-/*.gpg
-/*.gpg.lock
 /target/
-/logs/
 /test-output/
+/settings/
 /reports/
+/logs/
+/.settings/
+/.classpath
+/.project
+/bin/

@@ -18,7 +18,6 @@ package com.github.wasiqb.coteafs.services.soap;
 import org.testng.annotations.Test;
 
 import com.github.wasiqb.coteafs.services.error.ServiceNotFoundError;
-import com.github.wasiqb.coteafs.services.requests.AbstractRequest;
 import com.github.wasiqb.coteafs.services.soap.request.CalculatorRequest;
 
 /**
@@ -33,11 +32,11 @@ public class SoapTest {
 	@Test
 	public void testCalculator () {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api");
-		calc.withValue ("intA", 10);
-		calc.withValue ("intB", 10);
-		final AbstractRequest res = calc.post (true);
+		calc.withValue ("intA", 10)
+			.withValue ("intB", 10)
+			.post (true);
 
-		res.verifyThat ("AddResult")
+		calc.verifyThat ("AddResult")
 			.equalsTo ("20");
 	}
 
@@ -48,11 +47,11 @@ public class SoapTest {
 	@Test
 	public void testCalculator12 () {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api_12");
-		calc.withValue ("intA", 10);
-		calc.withValue ("intB", 10);
-		final AbstractRequest res = calc.post (true);
+		calc.withValue ("intA", 10)
+			.withValue ("intB", 10)
+			.post (true);
 
-		res.verifyThat ("AddResult")
+		calc.verifyThat ("AddResult")
 			.equalsTo ("20");
 	}
 
@@ -63,8 +62,8 @@ public class SoapTest {
 	@Test (expectedExceptions = ServiceNotFoundError.class)
 	public void testCalculatorInvalidUrl () {
 		final CalculatorRequest calc = new CalculatorRequest ("invalid_soap_api");
-		calc.withValue ("intA", 10);
-		calc.withValue ("intB", 10);
-		calc.post (true);
+		calc.withValue ("intA", 10)
+			.withValue ("intB", 10)
+			.post (true);
 	}
 }

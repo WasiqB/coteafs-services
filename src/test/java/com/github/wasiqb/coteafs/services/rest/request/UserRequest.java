@@ -22,7 +22,7 @@ import com.github.wasiqb.coteafs.services.requests.RequestElement;
  * @author wasiq.bhamla
  * @since Feb 11, 2018 6:32:51 PM
  */
-public class UserRequest extends AbstractRequest {
+public class UserRequest extends AbstractRequest <UserRequest> {
 	/**
 	 * @author wasiq.bhamla
 	 * @since Feb 11, 2018 6:44:12 PM

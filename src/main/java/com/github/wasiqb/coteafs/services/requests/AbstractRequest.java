@@ -32,9 +32,10 @@ import com.github.wasiqb.coteafs.services.helper.ResponseHandler;
 
 /**
  * @author wasiq.bhamla
+ * @param <T>
  * @since Aug 20, 2017 3:00:51 PM
  */
-public abstract class AbstractRequest {
+public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 	private static ServicesSetting settings;
 
 	static {
@@ -88,9 +89,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest delete (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T delete (final boolean shouldWork) {
 		this.response = execute (RequestMethod.DELETE, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -99,9 +101,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest get (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T get (final boolean shouldWork) {
 		this.response = execute (RequestMethod.GET, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -110,9 +113,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest head (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T head (final boolean shouldWork) {
 		this.response = execute (RequestMethod.HEAD, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -121,9 +125,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest options (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T options (final boolean shouldWork) {
 		this.response = execute (RequestMethod.OPTIONS, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -132,9 +137,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest patch (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T patch (final boolean shouldWork) {
 		this.response = execute (RequestMethod.PATCH, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -143,9 +149,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest post (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T post (final boolean shouldWork) {
 		this.response = execute (RequestMethod.POST, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -161,9 +168,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest put (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T put (final boolean shouldWork) {
 		this.response = execute (RequestMethod.PUT, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -172,9 +180,10 @@ public abstract class AbstractRequest {
 	 * @param shouldWork
 	 * @return response
 	 */
-	public AbstractRequest trace (final boolean shouldWork) {
+	@SuppressWarnings ("unchecked")
+	public T trace (final boolean shouldWork) {
 		this.response = execute (RequestMethod.TRACE, shouldWork);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -193,9 +202,10 @@ public abstract class AbstractRequest {
 	 * @param filePath
 	 * @return instance
 	 */
-	public AbstractRequest withFile (final String filePath) {
+	@SuppressWarnings ("unchecked")
+	public T withFile (final String filePath) {
 		this.files.add (filePath);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -205,9 +215,10 @@ public abstract class AbstractRequest {
 	 * @param value
 	 * @return instance
 	 */
-	public AbstractRequest withFormParameter (final String name, final Object value) {
+	@SuppressWarnings ("unchecked")
+	public T withFormParameter (final String name, final Object value) {
 		this.formParams.put (name, value);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -217,9 +228,10 @@ public abstract class AbstractRequest {
 	 * @since Aug 25, 2017 10:15:07 PM
 	 * @return instance
 	 */
-	public AbstractRequest withHeader (final String name, final Object value) {
+	@SuppressWarnings ("unchecked")
+	public T withHeader (final String name, final Object value) {
 		this.headers.put (name, value);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -229,9 +241,10 @@ public abstract class AbstractRequest {
 	 * @since Aug 25, 2017 10:15:12 PM
 	 * @return instance
 	 */
-	public AbstractRequest withParameter (final String name, final Object value) {
+	@SuppressWarnings ("unchecked")
+	public T withParameter (final String name, final Object value) {
 		this.params.put (name, value);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -241,9 +254,10 @@ public abstract class AbstractRequest {
 	 * @param value
 	 * @return instance
 	 */
-	public AbstractRequest withPathParameter (final String name, final Object value) {
+	@SuppressWarnings ("unchecked")
+	public T withPathParameter (final String name, final Object value) {
 		this.pathParams.put (name, value);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -253,9 +267,10 @@ public abstract class AbstractRequest {
 	 * @param value
 	 * @return instance
 	 */
-	public AbstractRequest withQueryParameter (final String name, final Object value) {
+	@SuppressWarnings ("unchecked")
+	public T withQueryParameter (final String name, final Object value) {
 		this.queryParams.put (name, value);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -265,9 +280,10 @@ public abstract class AbstractRequest {
 	 * @param value
 	 * @return instance
 	 */
-	public AbstractRequest withValue (final String fieldName, final Object value) {
+	@SuppressWarnings ("unchecked")
+	public T withValue (final String fieldName, final Object value) {
 		this.values.put (fieldName, value);
-		return this;
+		return (T) this;
 	}
 
 	/**
@@ -299,56 +315,26 @@ public abstract class AbstractRequest {
 			.response ();
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since May 12, 2018 7:08:20 PM
-	 * @param handler
-	 */
 	private void setFiles (final RequestHandler handler) {
 		handler.multiPart (this.files);
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 9, 2017 10:39:36 PM
-	 * @param handler
-	 */
 	private void setFormParams (final RequestHandler handler) {
 		handler.formParams (this.params);
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 4, 2017 10:11:24 PM
-	 * @param handler
-	 */
 	private void setHeaders (final RequestHandler handler) {
 		handler.headers (this.headers);
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 4, 2017 10:12:05 PM
-	 * @param handler
-	 */
 	private void setParams (final RequestHandler handler) {
 		handler.params (this.params);
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 9, 2017 10:39:44 PM
-	 * @param handler
-	 */
 	private void setPathParams (final RequestHandler handler) {
 		handler.pathParams (this.pathParams);
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 9, 2017 10:39:41 PM
-	 * @param handler
-	 */
 	private void setQueryParams (final RequestHandler handler) {
 		handler.queryParams (this.queryParams);
 	}

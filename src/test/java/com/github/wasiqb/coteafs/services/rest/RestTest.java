@@ -18,7 +18,6 @@ package com.github.wasiqb.coteafs.services.rest;
 import org.testng.annotations.Test;
 
 import com.github.wasiqb.coteafs.services.error.ServiceNotFoundError;
-import com.github.wasiqb.coteafs.services.requests.AbstractRequest;
 import com.github.wasiqb.coteafs.services.rest.request.UserRequest;
 
 /**
@@ -33,11 +32,10 @@ public class RestTest {
 	@Test
 	public void testSingleUser () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		final AbstractRequest response = user.get (true);
-		response.verifyThat ("data.first_name")
+		user.get (true);
+		user.verifyThat ("data.first_name")
 			.equalsTo ("Janet");
-
-		response.verifyThat ("data.last_name")
+		user.verifyThat ("data.last_name")
 			.equalsTo ("Weaver");
 	}
 
@@ -58,13 +56,13 @@ public class RestTest {
 	@Test
 	public void testUserCreate () {
 		final UserRequest user = new UserRequest ("first_api");
-		user.withValue ("name", "morpheus");
-		user.withValue ("job", "leader");
-		final AbstractRequest res = user.post (true);
+		user.withValue ("name", "morpheus")
+			.withValue ("job", "leader")
+			.post (true);
 
-		res.verifyThat ("name")
+		user.verifyThat ("name")
 			.equalsTo ("morpheus");
-		res.verifyThat ("job")
+		user.verifyThat ("job")
 			.equalsTo ("leader");
 	}
 
@@ -85,12 +83,12 @@ public class RestTest {
 	@Test
 	public void testUserList () {
 		final UserRequest user = new UserRequest ("first_api");
-		user.withQueryParameter ("page", 2);
-		final AbstractRequest res = user.get (true);
+		user.withQueryParameter ("page", 2)
+			.get (true);
 
-		res.verifyThat ("data.find { it.id == 4 }.first_name")
+		user.verifyThat ("data.find { it.id == 4 }.first_name")
 			.equalsTo ("Eve");
-		res.verifyThat ("data.find { it.id == 4 }.last_name")
+		user.verifyThat ("data.find { it.id == 4 }.last_name")
 			.equalsTo ("Holt");
 	}
 
@@ -101,13 +99,13 @@ public class RestTest {
 	@Test
 	public void testUserPatch () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		user.withValue ("name", "morpheus");
-		user.withValue ("job", "zion resident");
-		final AbstractRequest res = user.patch (true);
+		user.withValue ("name", "morpheus")
+			.withValue ("job", "zion resident")
+			.patch (true);
 
-		res.verifyThat ("name")
+		user.verifyThat ("name")
 			.equalsTo ("morpheus");
-		res.verifyThat ("job")
+		user.verifyThat ("job")
 			.equalsTo ("zion resident");
 	}
 
@@ -118,13 +116,13 @@ public class RestTest {
 	@Test
 	public void testUserUpdate () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		user.withValue ("name", "morpheus");
-		user.withValue ("job", "zion resident");
-		final AbstractRequest res = user.put (true);
+		user.withValue ("name", "morpheus")
+			.withValue ("job", "zion resident")
+			.put (true);
 
-		res.verifyThat ("name")
+		user.verifyThat ("name")
 			.equalsTo ("morpheus");
-		res.verifyThat ("job")
+		user.verifyThat ("job")
 			.equalsTo ("zion resident");
 	}
 
@@ -135,11 +133,11 @@ public class RestTest {
 	@Test
 	public void testWithQueryParam () {
 		final UserRequest user = new UserRequest ("first_api");
-		user.withQueryParameter ("delay", "3");
-		final AbstractRequest response = user.get (true);
-		response.verifyThat ("page")
+		user.withQueryParameter ("delay", "3")
+			.get (true);
+		user.verifyThat ("page")
 			.equalsTo (1);
-		response.verifyThat ("total")
+		user.verifyThat ("total")
 			.equalsTo (12);
 	}
 }

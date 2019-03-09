@@ -22,7 +22,7 @@ import com.github.wasiqb.coteafs.services.requests.RequestElement;
  * @author wasiq.bhamla
  * @since Feb 12, 2018 4:17:35 PM
  */
-public class CalculatorRequest extends AbstractRequest {
+public class CalculatorRequest extends AbstractRequest <CalculatorRequest> {
 	/**
 	 * @author wasiq.bhamla
 	 * @param serviceName
