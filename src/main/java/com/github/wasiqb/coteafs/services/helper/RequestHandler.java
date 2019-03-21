@@ -16,7 +16,6 @@
 package com.github.wasiqb.coteafs.services.helper;
 
 import static com.github.wasiqb.coteafs.services.utils.ErrorUtils.fail;
-import static com.google.common.truth.Truth.assertThat;
 import static java.lang.String.format;
 
 import java.io.File;
@@ -68,13 +67,8 @@ import io.restassured.specification.RequestSpecification;
  * @since 20-Aug-2017 3:48:38 PM
  */
 public class RequestHandler {
-	private static final String	LINE;
-	private static final Logger	LOG;
-
-	static {
-		LOG = LogManager.getLogger (RequestHandler.class);
-		LINE = StringUtils.repeat ("=", 80);
-	}
+	private static final String	LINE	= StringUtils.repeat ("=", 80);
+	private static final Logger	LOG		= LogManager.getLogger (RequestHandler.class);
 
 	/**
 	 * @author wasiq.bhamla
@@ -130,10 +124,9 @@ public class RequestHandler {
 	 * @author wasiq.bhamla
 	 * @since Aug 25, 2017 2:49:52 PM
 	 * @param method
-	 * @param shouldWork
 	 * @return instance
 	 */
-	public RequestHandler execute (final Method method, final boolean shouldWork) {
+	public RequestHandler execute (final Method method) {
 		LOG.info (format ("Executing request on [%s] with method [%s]...", url (), method));
 		try {
 			setSoapHeaders ();
@@ -141,10 +134,6 @@ public class RequestHandler {
 			logStatusDetails (res);
 			validateResponse (res);
 			this.response = new ResponseHandler (this.name, res, this.setting);
-			if (shouldWork) {
-				assertThat (res.statusCode ()).isGreaterThan (199);
-				assertThat (res.statusCode ()).isLessThan (300);
-			}
 		}
 		catch (final RequestExecutionFailedError e) {
 			fail (RequestExecutionError.class, "Execution failed", e);
@@ -250,7 +239,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler resource (final String path) {
 		this.resource = path;
-		if (!StringUtils.isEmpty (this.resource)) {
+		if (StringUtils.isNotEmpty (this.resource)) {
 			this.request = this.request.basePath (this.resource);
 		}
 		return this;
@@ -295,16 +284,20 @@ public class RequestHandler {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @param port
 	 * @since 20-Aug-2017 3:42:25 PM
 	 * @return instance
 	 */
-	public RequestHandler using () {
+	public RequestHandler using (final int port) {
 		final String endPoint = this.setting.getEndPoint ();
 		final String suffix = this.setting.getEndPointSuffix ();
 		final MediaType type = this.setting.getContentType ();
 
 		this.request = RestAssured.given ()
 			.baseUri (endPoint + suffix);
+		if (port > 0) {
+			this.request.port (port);
+		}
 		if (type != null) {
 			LOG.info (format ("End-point content-type: %s", type));
 			this.request = this.request.contentType (type.toString ());
@@ -315,24 +308,23 @@ public class RequestHandler {
 	/**
 	 * @author wasiq.bhamla
 	 * @since 20-Aug-2017 3:42:47 PM
-	 * @param requestElement
+	 * @param body
 	 * @return instance
 	 */
-	public RequestHandler with (final RequestElement requestElement) {
-		if (requestElement != null) {
-			this.name = requestElement.name ();
-			final RequestParser builder = RequestFactory.getParser (this.setting)
-				.build (requestElement);
-			final String body = builder.body ();
-			return with (body, this.setting.getLogging ());
+	public <T> RequestHandler with (final T body) {
+		if (body != null) {
+			if (body instanceof RequestElement) {
+				final RequestElement requestElement = (RequestElement) body;
+				this.name = requestElement.name ();
+				final RequestParser builder = RequestFactory.getParser (this.setting)
+					.build (requestElement);
+				return with (builder.body (), this.setting.getLogging ());
+			}
+			this.request.body (body);
 		}
 		return this;
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Feb 12, 2018 9:27:45 PM
-	 */
 	private void setSoapHeaders () {
 		if (this.setting.getType () == ServiceType.SOAP) {
 			final Map <String, Object> headers = new HashMap <> ();
@@ -342,12 +334,6 @@ public class RequestHandler {
 		}
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since 20-Aug-2017 3:43:04 PM
-	 * @param requestBody
-	 * @return instance
-	 */
 	private RequestHandler with (final String requestBody, final LoggingSetting logging) {
 		if (logging.isLogOnlyRequests ()) {
 			PayloadLoggerFactory.log (this.setting.getType (), PayloadType.REQUEST, requestBody);

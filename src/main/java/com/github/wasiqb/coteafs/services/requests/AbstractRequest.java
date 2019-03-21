@@ -17,11 +17,13 @@ package com.github.wasiqb.coteafs.services.requests;
 
 import static com.github.wasiqb.coteafs.services.config.ConfigConstants.SERVICE_CONFIG_DEFAULT_FILE_NAME;
 import static com.github.wasiqb.coteafs.services.config.ConfigConstants.SERVICE_CONFIG_KEY;
+import static com.google.common.truth.Truth.assertThat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.wasiqb.coteafs.config.loader.ConfigLoader;
 import com.github.wasiqb.coteafs.services.config.RequestMethod;
@@ -29,6 +31,8 @@ import com.github.wasiqb.coteafs.services.config.ServiceSetting;
 import com.github.wasiqb.coteafs.services.config.ServicesSetting;
 import com.github.wasiqb.coteafs.services.helper.RequestHandler;
 import com.github.wasiqb.coteafs.services.helper.ResponseHandler;
+import com.google.common.truth.IntegerSubject;
+import com.google.common.truth.StringSubject;
 
 /**
  * @author wasiq.bhamla
@@ -50,6 +54,7 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 	private final Map <String, Object>	headers;
 	private final Map <String, Object>	params;
 	private final Map <String, Object>	pathParams;
+	private int							port;
 	private final Map <String, Object>	queryParams;
 	private final String				resourcePath;
 	private ResponseHandler				response;
@@ -58,20 +63,41 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 
 	/**
 	 * @author wasiq.bhamla
+	 * @since Mar 21, 2019 3:53:05 PM
 	 * @param serviceName
-	 * @since Feb 12, 2018 4:19:46 PM
 	 */
 	public AbstractRequest (final String serviceName) {
-		this (serviceName, null);
+		this (serviceName, 0);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @param serviceName
+	 * @param port
+	 * @since Feb 12, 2018 4:19:46 PM
+	 */
+	public AbstractRequest (final String serviceName, final int port) {
+		this (serviceName, null, port);
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 21, 2019 3:54:15 PM
+	 * @param serviceName
+	 * @param resourcePath
+	 */
+	public AbstractRequest (final String serviceName, final String resourcePath) {
+		this (serviceName, resourcePath, 0);
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @param serviceName
 	 * @param resourcePath
+	 * @param port
 	 * @since Aug 20, 2017 3:00:51 PM
 	 */
-	public AbstractRequest (final String serviceName, final String resourcePath) {
+	public AbstractRequest (final String serviceName, final String resourcePath, final int port) {
 		this.setting = settings.getService (serviceName);
 		this.headers = new HashMap <> ();
 		this.params = new HashMap <> ();
@@ -80,78 +106,73 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 		this.queryParams = new HashMap <> ();
 		this.values = new HashMap <> ();
 		this.files = new ArrayList <> ();
+		this.port = port;
 		this.resourcePath = resourcePath == null ? "" : resourcePath;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:13:32 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T delete (final boolean shouldWork) {
-		this.response = execute (RequestMethod.DELETE, shouldWork);
+	public T delete () {
+		this.response = execute (RequestMethod.DELETE);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:13:24 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T get (final boolean shouldWork) {
-		this.response = execute (RequestMethod.GET, shouldWork);
+	public T get () {
+		this.response = execute (RequestMethod.GET);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:13:18 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T head (final boolean shouldWork) {
-		this.response = execute (RequestMethod.HEAD, shouldWork);
+	public T head () {
+		this.response = execute (RequestMethod.HEAD);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:13:11 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T options (final boolean shouldWork) {
-		this.response = execute (RequestMethod.OPTIONS, shouldWork);
+	public T options () {
+		this.response = execute (RequestMethod.OPTIONS);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:13:01 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T patch (final boolean shouldWork) {
-		this.response = execute (RequestMethod.PATCH, shouldWork);
+	public T patch () {
+		this.response = execute (RequestMethod.PATCH);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:12:54 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T post (final boolean shouldWork) {
-		this.response = execute (RequestMethod.POST, shouldWork);
+	public T post () {
+		this.response = execute (RequestMethod.POST);
 		return (T) this;
 	}
 
@@ -165,35 +186,63 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:12:48 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T put (final boolean shouldWork) {
-		this.response = execute (RequestMethod.PUT, shouldWork);
+	public T put () {
+		this.response = execute (RequestMethod.PUT);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
 	 * @since Mar 19, 2018 10:12:30 PM
-	 * @param shouldWork
 	 * @return response
 	 */
 	@SuppressWarnings ("unchecked")
-	public T trace (final boolean shouldWork) {
-		this.response = execute (RequestMethod.TRACE, shouldWork);
+	public T trace () {
+		this.response = execute (RequestMethod.TRACE);
 		return (T) this;
 	}
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Apr 1, 2018 9:59:56 PM
-	 * @param expression
-	 * @return response verify
+	 * @since Mar 17, 2019 11:29:33 PM
+	 * @return subject
 	 */
-	public ResponseVerify verifyThat (final String expression) {
-		return new ResponseVerify (this.response, expression);
+	public StringSubject verifyBody () {
+		return assertThat (this.response.body ());
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 17, 2019 11:30:28 PM
+	 * @param expression
+	 * @return subject
+	 */
+	public IntegerSubject verifyInt (final String expression) {
+		final Optional <Integer> value = this.response.valueOf (expression);
+		return assertThat (value.get ());
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 17, 2019 11:23:31 PM
+	 * @return subject
+	 */
+	public IntegerSubject verifyStatusCode () {
+		return assertThat (this.response.statusCode ());
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Mar 17, 2019 11:28:38 PM
+	 * @param expression
+	 * @return subject
+	 */
+	public StringSubject verifyString (final String expression) {
+		final Optional <String> value = this.response.valueOf (expression);
+		return assertThat (value.get ());
 	}
 
 	/**
@@ -231,6 +280,19 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 	@SuppressWarnings ("unchecked")
 	public T withHeader (final String name, final Object value) {
 		this.headers.put (name, value);
+		return (T) this;
+	}
+
+	/**
+	 * @author wasiq.bhamla
+	 * @since Sep 21, 2017 11:27:56 AM
+	 * @param fieldName
+	 * @param value
+	 * @return instance
+	 */
+	@SuppressWarnings ("unchecked")
+	public T withInputValue (final String fieldName, final Object value) {
+		this.values.put (fieldName, value);
 		return (T) this;
 	}
 
@@ -275,19 +337,6 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 
 	/**
 	 * @author wasiq.bhamla
-	 * @since Sep 21, 2017 11:27:56 AM
-	 * @param fieldName
-	 * @param value
-	 * @return instance
-	 */
-	@SuppressWarnings ("unchecked")
-	public T withValue (final String fieldName, final Object value) {
-		this.values.put (fieldName, value);
-		return (T) this;
-	}
-
-	/**
-	 * @author wasiq.bhamla
 	 * @since Sep 21, 2017 11:30:07 AM
 	 * @param fieldName
 	 * @return value
@@ -297,10 +346,10 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 		return (V) this.values.get (fieldName);
 	}
 
-	private ResponseHandler execute (final RequestMethod method, final boolean shouldWork) {
+	private ResponseHandler execute (final RequestMethod method) {
 		RequestHandler handler = RequestHandler.build ()
 			.setting (this.setting)
-			.using ()
+			.using (this.port)
 			.resource (this.resourcePath);
 		if (method != RequestMethod.GET) {
 			handler = handler.with (prepare ());
@@ -311,7 +360,7 @@ public abstract class AbstractRequest <T extends AbstractRequest <T>> {
 		setQueryParams (handler);
 		setPathParams (handler);
 		setFiles (handler);
-		return handler.execute (method.getMethod (), shouldWork)
+		return handler.execute (method.getMethod ())
 			.response ();
 	}
 

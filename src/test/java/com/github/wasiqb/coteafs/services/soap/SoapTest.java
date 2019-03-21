@@ -32,12 +32,14 @@ public class SoapTest {
 	@Test
 	public void testCalculator () {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api");
-		calc.withValue ("intA", 10)
-			.withValue ("intB", 10)
-			.post (true);
+		calc.withInputValue ("intA", 10)
+			.withInputValue ("intB", 10)
+			.post ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 
-		calc.verifyThat ("AddResult")
-			.equalsTo ("20");
+		calc.verifyString ("AddResult")
+			.isEqualTo ("20");
 	}
 
 	/**
@@ -47,12 +49,14 @@ public class SoapTest {
 	@Test
 	public void testCalculator12 () {
 		final CalculatorRequest calc = new CalculatorRequest ("soap_api_12");
-		calc.withValue ("intA", 10)
-			.withValue ("intB", 10)
-			.post (true);
+		calc.withInputValue ("intA", 10)
+			.withInputValue ("intB", 10)
+			.post ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 
-		calc.verifyThat ("AddResult")
-			.equalsTo ("20");
+		calc.verifyString ("AddResult")
+			.isEqualTo ("20");
 	}
 
 	/**
@@ -62,8 +66,10 @@ public class SoapTest {
 	@Test (expectedExceptions = ServiceNotFoundError.class)
 	public void testCalculatorInvalidUrl () {
 		final CalculatorRequest calc = new CalculatorRequest ("invalid_soap_api");
-		calc.withValue ("intA", 10)
-			.withValue ("intB", 10)
-			.post (true);
+		calc.withInputValue ("intA", 10)
+			.withInputValue ("intB", 10)
+			.post ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 	}
 }

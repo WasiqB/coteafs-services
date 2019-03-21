@@ -32,11 +32,13 @@ public class RestTest {
 	@Test
 	public void testSingleUser () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		user.get (true);
-		user.verifyThat ("data.first_name")
-			.equalsTo ("Janet");
-		user.verifyThat ("data.last_name")
-			.equalsTo ("Weaver");
+		user.get ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
+		user.verifyString ("data.first_name")
+			.isEqualTo ("Janet");
+		user.verifyString ("data.last_name")
+			.isEqualTo ("Weaver");
 	}
 
 	/**
@@ -46,7 +48,9 @@ public class RestTest {
 	@Test (expectedExceptions = ServiceNotFoundError.class)
 	public void testSingleUserInvalidUrl () {
 		final UserRequest user = new UserRequest ("invalid_rest_api", 2);
-		user.get (true);
+		user.get ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 	}
 
 	/**
@@ -56,14 +60,16 @@ public class RestTest {
 	@Test
 	public void testUserCreate () {
 		final UserRequest user = new UserRequest ("first_api");
-		user.withValue ("name", "morpheus")
-			.withValue ("job", "leader")
-			.post (true);
+		user.withInputValue ("name", "morpheus")
+			.withInputValue ("job", "leader")
+			.post ()
+			.verifyStatusCode ()
+			.isEqualTo (201);
 
-		user.verifyThat ("name")
-			.equalsTo ("morpheus");
-		user.verifyThat ("job")
-			.equalsTo ("leader");
+		user.verifyString ("name")
+			.isEqualTo ("morpheus");
+		user.verifyString ("job")
+			.isEqualTo ("leader");
 	}
 
 	/**
@@ -73,7 +79,9 @@ public class RestTest {
 	@Test
 	public void testUserDelete () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		user.delete (true);
+		user.delete ()
+			.verifyStatusCode ()
+			.isEqualTo (204);
 	}
 
 	/**
@@ -84,12 +92,14 @@ public class RestTest {
 	public void testUserList () {
 		final UserRequest user = new UserRequest ("first_api");
 		user.withQueryParameter ("page", 2)
-			.get (true);
+			.get ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 
-		user.verifyThat ("data.find { it.id == 4 }.first_name")
-			.equalsTo ("Eve");
-		user.verifyThat ("data.find { it.id == 4 }.last_name")
-			.equalsTo ("Holt");
+		user.verifyString ("data.find { it.id == 4 }.first_name")
+			.isEqualTo ("Eve");
+		user.verifyString ("data.find { it.id == 4 }.last_name")
+			.isEqualTo ("Holt");
 	}
 
 	/**
@@ -99,14 +109,16 @@ public class RestTest {
 	@Test
 	public void testUserPatch () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		user.withValue ("name", "morpheus")
-			.withValue ("job", "zion resident")
-			.patch (true);
+		user.withInputValue ("name", "morpheus")
+			.withInputValue ("job", "zion resident")
+			.patch ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 
-		user.verifyThat ("name")
-			.equalsTo ("morpheus");
-		user.verifyThat ("job")
-			.equalsTo ("zion resident");
+		user.verifyString ("name")
+			.isEqualTo ("morpheus");
+		user.verifyString ("job")
+			.isEqualTo ("zion resident");
 	}
 
 	/**
@@ -116,14 +128,16 @@ public class RestTest {
 	@Test
 	public void testUserUpdate () {
 		final UserRequest user = new UserRequest ("first_api", 2);
-		user.withValue ("name", "morpheus")
-			.withValue ("job", "zion resident")
-			.put (true);
+		user.withInputValue ("name", "morpheus")
+			.withInputValue ("job", "zion resident")
+			.put ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
 
-		user.verifyThat ("name")
-			.equalsTo ("morpheus");
-		user.verifyThat ("job")
-			.equalsTo ("zion resident");
+		user.verifyString ("name")
+			.isEqualTo ("morpheus");
+		user.verifyString ("job")
+			.isEqualTo ("zion resident");
 	}
 
 	/**
@@ -134,10 +148,12 @@ public class RestTest {
 	public void testWithQueryParam () {
 		final UserRequest user = new UserRequest ("first_api");
 		user.withQueryParameter ("delay", "3")
-			.get (true);
-		user.verifyThat ("page")
-			.equalsTo (1);
-		user.verifyThat ("total")
-			.equalsTo (12);
+			.get ()
+			.verifyStatusCode ()
+			.isEqualTo (200);
+		user.verifyInt ("page")
+			.isEqualTo (1);
+		user.verifyInt ("total")
+			.isEqualTo (12);
 	}
 }

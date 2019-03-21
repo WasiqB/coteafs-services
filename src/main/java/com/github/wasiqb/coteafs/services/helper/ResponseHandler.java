@@ -60,7 +60,8 @@ public class ResponseHandler {
 	 * @param setting
 	 * @since Aug 25, 2017 3:56:47 PM
 	 */
-	public ResponseHandler (final String name, final Response response, final ServiceSetting setting) {
+	public ResponseHandler (final String name, final Response response,
+		final ServiceSetting setting) {
 		this.name = name;
 		this.response = response;
 		this.setting = setting;
@@ -127,10 +128,6 @@ public class ResponseHandler {
 		return parser.valueOf (this.name, expression);
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 18, 2017 8:11:09 PM
-	 */
 	private void logHeaders () {
 		final LoggingSetting logging = this.setting.getLogging ();
 		if (logging.isLogHeaders ()) {
@@ -144,10 +141,6 @@ public class ResponseHandler {
 		}
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 18, 2017 8:11:51 PM
-	 */
 	private void logResponse () {
 		final LoggingSetting logging = this.setting.getLogging ();
 		if (logging.isLogOnlyResponses ()) {
@@ -155,10 +148,6 @@ public class ResponseHandler {
 		}
 	}
 
-	/**
-	 * @author wasiq.bhamla
-	 * @since Sep 18, 2017 8:10:09 PM
-	 */
 	private void logResponseInfo () {
 		LOG.info (String.format ("Request executed in [%.2f] secs...", time ()));
 		logHeaders ();
