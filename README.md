@@ -8,5 +8,10 @@
 [![Security](https://sonarcloud.io/api/project_badges/measure?project=com.github.wasiqb.coteafs%3Aservices&metric=security_rating)](https://sonarcloud.io/component_measures?id=com.github.wasiqb.coteafs%3Aservices&metric=Security)
 [![Vulnurability](https://sonarcloud.io/api/project_badges/measure?project=com.github.wasiqb.coteafs%3Aservices&metric=vulnerabilities)](https://sonarcloud.io/component_measures?id=com.github.wasiqb.coteafs%3Aservices&metric=new_vulnerabilities)
 [![Duplicate Code](https://sonarcloud.io/api/project_badges/measure?project=com.github.wasiqb.coteafs%3Aservices&metric=duplicated_lines_density)](https://sonarcloud.io/component_measures?id=com.github.wasiqb.coteafs%3Aservices&metric=Duplications)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWasiqB%2Fcoteafs-services.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FWasiqB%2Fcoteafs-services?ref=badge_shield)
 
 # coteafs-services
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FWasiqB%2Fcoteafs-services.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FWasiqB%2Fcoteafs-services?ref=badge_large)
